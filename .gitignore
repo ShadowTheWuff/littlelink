@@ -1,0 +1,5 @@
+.DS_Store
+.idea
+.devcontainer
+.wrangler/
+node_modules/
