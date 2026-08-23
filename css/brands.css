@@ -635,3 +635,8 @@
 	--button-background:#0B5CFF;
   --button-border:1px solid #FFFFFF;
 }
+/* VRChat */
+.button-vrchat {
+    --button-text: #ffffff;
+    --button-background: #2457f5;
+}
