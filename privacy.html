@@ -51,6 +51,20 @@
           <h2 id="analytics-heading">Analytics</h2>
           <p>The services contained in this section enable the Owner to monitor and analyze web traffic and can be used to keep track of User behavior.</p>
 
+          <h3>Vercel Web Analytics</h3>
+          <ul role="list">
+            <li>Personal Data: Anonymized page views, referrers, geolocation (country/city level), device type, operating system, and browser information</li>
+            <li>Privacy-focused: No cookies, no personal identifiers, fully GDPR compliant</li>
+            <li><a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a></li>
+          </ul>
+
+          <h3>Vercel Speed Insights</h3>
+          <ul role="list">
+            <li>Personal Data: Anonymized performance metrics including page load times, Core Web Vitals, and technical performance data</li>
+            <li>Privacy-focused: No cookies, no personal identifiers, fully GDPR compliant</li>
+            <li><a href="https://vercel.com/docs/speed-insights/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a></li>
+          </ul>
+
           <h3>Cloudflare, Inc.</h3>
           <ul role="list">
             <li>Personal Data: various types of Data as specified in the privacy policy of the service</li>
@@ -93,6 +107,12 @@
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- Vercel Speed Insights -->
+    <script>
+      window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
 
   </body>
 
