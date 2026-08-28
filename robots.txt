@@ -1,0 +1,66 @@
+# robots.txt — LittleLink
+#
+# Search engines and link-preview bots are welcome: this is a link-in-bio page,
+# so indexing and social unfurls are the point. AI training crawlers are not.
+#
+# This file is advisory — well-behaved crawlers honor it, abusive ones ignore it.
+# Enforcement lives in the Vercel Firewall (see docs/bot-management.md).
+
+# Default: everything else may crawl the whole site.
+User-agent: *
+Allow: /
+
+# --- AI training crawlers: opted out -----------------------------------------
+# These fetch pages in bulk to train or ground generative models.
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+# --- Deliberately NOT blocked ------------------------------------------------
+# Search crawlers (Googlebot, Bingbot, DuckDuckBot, Applebot) — you want ranking.
+# Preview bots (facebookexternalhit, Twitterbot, LinkedInBot, Slackbot) — you
+#   want rich cards when someone shares the link.
+# User-initiated assistants (ChatGPT-User, Claude-User, Perplexity-User) — these
+#   fetch a page because a person asked for it, like a browser would.

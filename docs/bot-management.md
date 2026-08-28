@@ -4,6 +4,7 @@ Bots generate nearly half of all internet traffic. While many bots serve legitim
 
 ## On this page
 
+- [Setting this up for this project](#setting-this-up-for-this-project)
 - [How bot management works](#how-bot-management-works)
   - [Methods of bot management and protection](#methods-of-bot-management-and-protection)
 - [Bot protection managed ruleset](#bot-protection-managed-ruleset)
@@ -15,6 +16,42 @@ Bots generate nearly half of all internet traffic. While many bots serve legitim
   - [Bot verification methods](#bot-verification-methods)
   - [Verified bots directory](#verified-bots-directory)
 - [Related Vercel documentation](#related-vercel-documentation)
+
+## Setting this up for this project
+
+This repository is a static site deployed on Vercel (`vercel.json`, region `cle1`). Bot management for it comes in two halves: the part that lives in this repo, and the part that lives in the Vercel dashboard.
+
+### What is configured in this repo
+
+- **`robots.txt`** — declares an opt-out for AI training crawlers (GPTBot, ClaudeBot, CCBot, Google-Extended, Applebot-Extended, meta-externalagent, Bytespider, and others) while leaving search engines, link-preview bots, and user-initiated assistant fetches allowed. A link-in-bio page depends on indexing and on rich social cards, so blocking those would cost more than it saves.
+
+  `robots.txt` is advisory. Well-behaved crawlers honor it; scrapers and credential-stuffers ignore it. It sets policy, it does not enforce it.
+
+### What must be configured in the Vercel dashboard
+
+The managed rulesets are project settings, not repository files — there is nothing to commit for them. Open the project in the Vercel dashboard and go to the **Firewall** tab, then **Managed Rulesets**.
+
+| Ruleset | Default | Set it to | Why |
+| --- | --- | --- | --- |
+| AI bots | Allow | **Log**, then **Deny** | Enforces at the edge what `robots.txt` only requests. Vercel keeps the bot list current, so new crawlers are covered without a change here. |
+| Bot protection | Off | **Log** first | Challenges clients that fail browser-behavior checks. Watch the logs before turning on the challenge. |
+
+Start both in **Log** mode and review [Firewall Observability](/docs/vercel-firewall/firewall-observability) for a few days before enforcing. Log mode records what *would* have matched without affecting a single visitor, which is the only safe way to find out whether a rule would catch real traffic.
+
+### A caution specific to this site
+
+Bot protection in **Challenge** mode serves a JavaScript challenge to clients it considers non-browser-like. On a page whose entire value is loading instantly (this repo advertises 100/100 PageSpeed), that interstitial is a real cost paid on every unrecognized visitor. Verified bots are excluded from evaluation automatically, so search crawlers and preview fetchers are not the concern — the concern is legitimate humans on unusual browsers or privacy tooling.
+
+The AI bots ruleset carries no such cost: it matches a known list and denies, with no challenge in the path of a normal visitor. If you only turn on one of the two, make it that one.
+
+### What does not apply here
+
+- **[BotID](https://vercel.com/docs/botid)** protects server-side routes and API endpoints by checking requests before running expensive work. This site is static HTML, CSS, and one JavaScript file — there is no endpoint to gate, so BotID has nothing to protect.
+- **Rate limiting** via custom WAF rules is aimed at login forms, checkouts, and APIs. A page of outbound links has no such action to abuse.
+
+### If you put a proxy in front of Vercel
+
+Do not enable bot protection if this site sits behind Cloudflare or another CDN. As described under [Bot protection ruleset with reverse proxies](#bot-protection-ruleset-with-reverse-proxies), a proxy masks the signals detection depends on and rotating exit IPs force repeated challenges. Currently this project deploys straight to Vercel, so this does not apply.
 
 ## How bot management works
 
