@@ -438,6 +438,13 @@
   --button-border:1px solid #FFFFFF;
 }
 
+/* Tracker Network */
+.button-tracker-network {
+	--button-text:#ffffff;
+	--button-background:#313131;
+	--button-border:1px solid #599AD7;
+}
+
 /* Trakt */
 .button-trakt {
 	--button-text:#ffffff;
