@@ -25,6 +25,38 @@
     <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <!-- Unqualified fallback for link unfurlers that ignore `media` -->
+    <meta name="theme-color" content="#121212">
+
+    <!-- Social Sharing (Open Graph & Twitter) - controls how this page looks
+         when shared on social platforms and in chat apps.
+         og:url and og:image must be full absolute URLs. -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Shadowthewuff">
+    <meta property="og:title" content="Privacy Overview">
+    <meta property="og:description" content="Privacy policy and data collection information for this site.">
+    <meta property="og:url" content="https://me.shadowdewuff.gay/privacy">
+    <meta property="og:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
+    <meta property="og:image:alt" content="Shadowthewuff avatar">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Privacy Overview">
+    <meta name="twitter:description" content="Privacy policy and data collection information for this site.">
+    <meta name="twitter:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta name="twitter:image:alt" content="Shadowthewuff avatar">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH1F0X7SZW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WH1F0X7SZW');
+    </script>
+    <!-- / Google tag -->
 
     <!-- Fathom - beautiful, simple website analytics -->
     <script src="https://cdn.usefathom.com/script.js" data-site="AYZWHUVB" defer></script>
@@ -60,6 +92,12 @@
             <li>Personal Data: various types of Data as specified in the privacy policy of the service</li>
             <li><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Privacy Policy</a></li>
           </ul>
+
+          <h3>Google Analytics (Google LLC)</h3>
+          <ul role="list">
+            <li>Personal Data: Usage Data; various types of Data as specified in the privacy policy of the service</li>
+            <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a></li>
+          </ul>
         </section>
 
         <section aria-labelledby="external-content-heading">
@@ -88,6 +126,7 @@
 
         <footer>
           <p>Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
+          <p class="cluster">cluster: prod-us-east-2</p>
         </footer>
       </div>
     </main>
