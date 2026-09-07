@@ -438,6 +438,15 @@
 	--button-background:#199C77;
 }
 
+/* TikTok - .button-tiktok itself lives in brands.css; this only swaps the
+   square note symbol for the full logo lockup, which already reads "TikTok"
+   and so replaces the button's text label */
+.button-tiktok .icon {
+	width:auto;
+	height:1.5rem;
+	margin-right:0;
+}
+
 /* Tidal */
 .button-tidal {
   --button-text:#FFFFFF;
