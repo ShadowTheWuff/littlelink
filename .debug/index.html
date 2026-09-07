@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<!--
+  Dummy debug page. Nothing here is wired to a real build pipeline - the
+  "Build" values are placeholders, and the "Client" values are read from the
+  browser at page load and only ever displayed on this page. Nothing is sent
+  anywhere.
+
+  To change the theme, change the class on the html tag below to one of:
+  - theme-auto: Automatically switches based on user's system preferences
+  - theme-light: Forces light theme
+  - theme-dark: Forces dark theme
+-->
+
+<html class="theme-auto" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Debug | LittleLink</title>
+    <link rel="icon" type="image/png" href="../images/avatar.png">
+
+    <meta name="description" content="Diagnostic page">
+    <meta name="robots" content="noindex, nofollow"> <!-- Utility page, keep it out of search results -->
+
+    <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+      /* Page-local styling. The shared stylesheets theme by class on <html>,
+         so the same three cases are mirrored here. */
+      :root {
+        --debug-muted:#5a5a5a;
+        --debug-rule:#e4e4e4;
+        --debug-surface:#f7f7f7;
+      }
+      :root.theme-dark {
+        --debug-muted:#a0a0a0;
+        --debug-rule:#2e2e2e;
+        --debug-surface:#1c1c1c;
+      }
+      @media (prefers-color-scheme:dark) {
+        :root.theme-auto {
+          --debug-muted:#a0a0a0;
+          --debug-rule:#2e2e2e;
+          --debug-surface:#1c1c1c;
+        }
+      }
+
+      .debug-table {
+        width:100%;
+        border-collapse:collapse;
+        font-size:0.875rem;
+        text-align:left;
+      }
+      .debug-table th,
+      .debug-table td {
+        padding:0.5rem 0.75rem;
+        border-bottom:1px solid var(--debug-rule);
+        vertical-align:top;
+      }
+      .debug-table th {
+        width:11rem;
+        font-weight:700;
+        white-space:nowrap;
+      }
+      .debug-table td {
+        font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+        word-break:break-word;
+      }
+
+      .debug-note {
+        padding:0.75rem 1rem;
+        background-color:var(--debug-surface);
+        border-radius:0.5rem;
+        color:var(--debug-muted);
+        font-size:0.875rem;
+      }
+
+      /* Network use banner */
+      .notice {
+        margin:var(--spacing-xxl) 0 var(--spacing-l) 0;
+        padding-top:var(--spacing-m);
+        border-top:1px solid var(--debug-rule);
+        color:var(--debug-muted);
+        font-size:0.8125rem;
+        line-height:1.7;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <main class="container-left">
+      <div class="column">
+        <nav>
+          <a href="../index.html" aria-label="Back to homepage">&larr; Back to main page</a>
+        </nav>
+
+        <h1>Debug</h1>
+
+        <p class="debug-note">Placeholder diagnostics page. The build values below are dummy entries, not real deployment metadata. The client values are read from your own browser when this page loads and are only shown here.</p>
+
+        <section aria-labelledby="build-heading">
+          <h2 id="build-heading">Build</h2>
+          <table class="debug-table">
+            <tbody>
+              <tr><th scope="row">Environment</th><td>placeholder</td></tr>
+              <tr><th scope="row">Build ID</th><td>0000000-dummy</td></tr>
+              <tr><th scope="row">Commit</th><td>&mdash;</td></tr>
+              <tr><th scope="row">Built at</th><td>&mdash;</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section aria-labelledby="client-heading">
+          <h2 id="client-heading">Client</h2>
+          <table class="debug-table">
+            <tbody>
+              <tr><th scope="row">Page URL</th><td id="dbg-url">&mdash;</td></tr>
+              <tr><th scope="row">Loaded at</th><td id="dbg-time">&mdash;</td></tr>
+              <tr><th scope="row">Time zone</th><td id="dbg-tz">&mdash;</td></tr>
+              <tr><th scope="row">Language</th><td id="dbg-lang">&mdash;</td></tr>
+              <tr><th scope="row">Viewport</th><td id="dbg-viewport">&mdash;</td></tr>
+              <tr><th scope="row">Screen</th><td id="dbg-screen">&mdash;</td></tr>
+              <tr><th scope="row">Pixel ratio</th><td id="dbg-dpr">&mdash;</td></tr>
+              <tr><th scope="row">Color scheme</th><td id="dbg-scheme">&mdash;</td></tr>
+              <tr><th scope="row">Online</th><td id="dbg-online">&mdash;</td></tr>
+              <tr><th scope="row">Referrer</th><td id="dbg-referrer">&mdash;</td></tr>
+              <tr><th scope="row">User agent</th><td id="dbg-ua">&mdash;</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <footer>
+          <p class="notice">This is a restricted network. Use of this network, its equipment, and resources is monitored at all times and requires explicit permission from the network administrator. If you do not have this permission in writing, you are violating the regulations of this network and can and will be prosecuted to the full extent of the law. By continuing into this system, you are acknowledging that you are aware of and agree to these terms.</p>
+        </footer>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        var set = function (id, value) {
+          var el = document.getElementById(id);
+          if (el) { el.textContent = value; }
+        };
+        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+        set('dbg-url', window.location.href);
+        set('dbg-time', new Date().toISOString());
+        try {
+          set('dbg-tz', Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown');
+        } catch (e) {
+          set('dbg-tz', 'unavailable');
+        }
+        set('dbg-lang', navigator.language || 'unknown');
+        set('dbg-viewport', window.innerWidth + ' x ' + window.innerHeight);
+        set('dbg-screen', window.screen.width + ' x ' + window.screen.height);
+        set('dbg-dpr', String(window.devicePixelRatio || 1));
+        set('dbg-scheme', dark ? 'dark' : 'light');
+        set('dbg-online', navigator.onLine ? 'yes' : 'no');
+        set('dbg-referrer', document.referrer || 'none');
+        set('dbg-ua', navigator.userAgent);
+      })();
+    </script>
+
+  </body>
+
+</html>
