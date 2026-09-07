@@ -253,6 +253,13 @@
   --button-border:1px solid #FFFFFF;
 }
 
+/* Medal.tv */
+.button-medal-tv {
+	--button-text:#ffffff;
+	--button-background:#364153;
+	--button-border:1px solid #BFF83E;
+}
+
 /* Micro.blog */
 .button-microblog {
   --button-text:#FFFFFF;
