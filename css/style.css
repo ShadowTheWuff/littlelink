@@ -116,6 +116,13 @@ footer {
 	margin:var(--spacing-xxl) 0;            /* 4rem (64px) top and bottom */
     font-size:var(--scale-0);
 }
+/* Cluster label - shown in the footer of every page */
+.cluster {
+	margin:var(--spacing-s) 0 0 0;
+	font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+	font-size:0.75rem;                      /* 12px */
+	opacity:0.6;                            /* Reads as muted on both themes */
+}
 
 /* Responsive adjustments */
 @media (max-width:34.375rem) {              /* 550px */

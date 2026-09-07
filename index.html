@@ -29,6 +29,20 @@
     <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <!-- Unqualified fallback. Browsers use the media-matched tags above; link
+         unfurlers that ignore `media` (Discord colors its embed stripe from
+         theme-color) have something to read. -->
+    <meta name="theme-color" content="#121212">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH1F0X7SZW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WH1F0X7SZW');
+    </script>
+    <!-- / Google tag -->
 
     <!-- Fathom - beautiful, simple website analytics -->
     <script src="https://cdn.usefathom.com/script.js" data-site="AYZWHUVB" defer></script>
@@ -39,11 +53,21 @@
          og:url and og:image must be full absolute URLs. -->
     
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Shadowthewuff">
     <meta property="og:title" content="Wruff (me site)">
     <meta property="og:description" content="Meow.">
-    <meta property="og:url" content="https://me.shadowdewuff.gay">
-    <meta property="og:image" content="https://yourwebsite.com/images/avatar@2x.png">
+    <meta property="og:url" content="https://me.shadowdewuff.gay/">
+    <meta property="og:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
+    <meta property="og:image:alt" content="Shadowthewuff avatar">
+    <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Wruff (me site)">
+    <meta name="twitter:description" content="Meow.">
+    <meta name="twitter:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta name="twitter:image:alt" content="Shadowthewuff avatar">
 
 
     <!-- Font Preloads - Lets the browser fetch fonts in parallel with the stylesheets -->
@@ -123,6 +147,7 @@
       <!-- Feel free to add your own footer information, including updating `privacy.html` to reflect how your LittleLink fork is set up -->
       <footer>
         <a href="privacy.html">Privacy Policy</a> | <a href=".debug/">Debug</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink</a>
+        <p class="cluster">cluster: prod-us-east-2</p>
       </footer>
 
     </div>
