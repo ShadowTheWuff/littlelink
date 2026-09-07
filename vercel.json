@@ -1,5 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "regions": ["cle1"]
+  "regions": ["cle1"],
+  "rewrites": [
+    { "source": "/.debug", "destination": "/.debug/index.html" },
+    { "source": "/.debug/", "destination": "/.debug/index.html" }
+  ]
 }
