@@ -253,13 +253,6 @@
   --button-border:1px solid #FFFFFF;
 }
 
-/* Medal.tv */
-.button-medal-tv {
-	--button-text:#ffffff;
-	--button-background:#364153;
-	--button-border:1px solid #BFF83E;
-}
-
 /* Micro.blog */
 .button-microblog {
   --button-text:#FFFFFF;
@@ -438,27 +431,11 @@
 	--button-background:#199C77;
 }
 
-/* TikTok - .button-tiktok itself lives in brands.css; this only swaps the
-   square note symbol for the full logo lockup, which already reads "TikTok"
-   and so replaces the button's text label */
-.button-tiktok .icon {
-	width:auto;
-	height:1.5rem;
-	margin-right:0;
-}
-
 /* Tidal */
 .button-tidal {
   --button-text:#FFFFFF;
   --button-background:#000000;
   --button-border:1px solid #FFFFFF;
-}
-
-/* Tracker Network */
-.button-tracker-network {
-	--button-text:#ffffff;
-	--button-background:#313131;
-	--button-border:1px solid #599AD7;
 }
 
 /* Trakt */
