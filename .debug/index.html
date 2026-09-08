@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 
 <!--
-  Debug page. The "Deployment" section is filled from /api/debug, a small
-  Vercel serverless function that reports the system environment it runs in
-  (region, deployment id, git commit). The "Client" values are read from the
-  browser at page load. Everything is display-only; nothing is stored or sent
-  anywhere.
+  Debug page. The "Deployment" section is filled from /api/debug, a Vercel
+  Edge Function that reports the system environment it runs in (region,
+  deployment id, git commit). As an Edge Function it runs at whichever
+  Vercel PoP is closest to the visitor rather than one fixed region, so this
+  page's own Region row reflects the location that actually answered your
+  request. The "Client" values are read from the browser at page load.
+  Everything is display-only; nothing is stored or sent anywhere.
 
   To change the theme, change the class on the html tag below to one of:
   - theme-auto: Automatically switches based on user's system preferences
@@ -137,7 +139,7 @@
 
         <h1>Debug</h1>
 
-        <p class="debug-note">Deployment values come from <code>/api/debug</code>, which reads the environment Vercel gives the running function. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
+        <p class="debug-note">Deployment values come from <code>/api/debug</code>, an Edge Function that runs at the Vercel location closest to you and reports the environment it ran in. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
 
         <section aria-labelledby="deployment-heading">
           <h2 id="deployment-heading">Deployment</h2>
@@ -147,6 +149,7 @@
               <tr><th scope="row">Host</th><td id="dep-host">&mdash;</td></tr>
               <tr><th scope="row">Environment</th><td id="dep-env">&mdash;</td></tr>
               <tr><th scope="row">Region</th><td id="dep-region">&mdash;</td></tr>
+              <tr><th scope="row">Region source</th><td id="dep-region-source">&mdash;</td></tr>
               <tr><th scope="row">Deployment ID</th><td id="dep-id">&mdash;</td></tr>
               <tr><th scope="row">Deployment URL</th><td id="dep-url">&mdash;</td></tr>
               <tr><th scope="row">Branch</th><td id="dep-branch">&mdash;</td></tr>
@@ -233,6 +236,7 @@
             set('dep-region', info.region
               ? info.region + (info.regionName ? ' (' + info.regionName + ')' : '')
               : '—');
+            set('dep-region-source', or(info.regionSource));
             set('dep-id', or(dep.id));
             if (dep.url) { setLink('dep-url', dep.url, 'https://' + dep.url); } else { set('dep-url', '—'); }
             set('dep-branch', or(git.ref));

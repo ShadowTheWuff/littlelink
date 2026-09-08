@@ -1,13 +1,22 @@
-// Vercel serverless function behind the debug page (/.debug) and the
-// "cluster:" label in every page footer.
+// Vercel Edge Function behind the debug page (/.debug) and the "cluster:"
+// label in every page footer.
 //
-// It reports where and what this deployment is, using only the system
-// environment variables Vercel sets at runtime and a few headers the edge
-// attaches to the request. Nothing is stored or forwarded anywhere; the
-// response is generated fresh per request and marked no-store.
+// This runs on the Edge Runtime (config.runtime = "edge" below), not as a
+// Node.js serverless Function. Vercel deploys an Edge Function to every
+// region on its edge network and answers each request from the Point of
+// Presence closest to whoever made it - so a visitor in Germany is served
+// by a nearby European PoP, not routed across the Atlantic to a single
+// fixed region the way a plain Node Function would be.
+//
+// It reports where and what handled the request, using the environment
+// variables Vercel exposes at the edge and the headers its network attaches
+// to the request. Nothing is stored or forwarded; the response is generated
+// fresh per request and marked no-store.
 //
 // Requires "Automatically expose System Environment Variables" to be on in
 // the Vercel project settings, otherwise most fields come back null.
+
+export const config = { runtime: 'edge' };
 
 var REGION_NAMES = {
   arn1: 'Stockholm, Sweden',
@@ -31,23 +40,34 @@ var REGION_NAMES = {
   dev1: 'Local development'
 };
 
-// Captured once per function instance, so it reflects when this instance
-// cold-started rather than when the request came in.
+// Captured once per isolate, so it reflects when this particular edge
+// instance last cold-started rather than when the request came in. Edge
+// isolates are short-lived and scoped to one PoP, so this resets far more
+// often than a Node Function's equivalent would.
 var INSTANCE_STARTED_AT = new Date().toISOString();
 
-function header(req, name) {
-  var value = req.headers[name];
-  return typeof value === 'string' && value.length ? value : null;
-}
-
 function decoded(value) {
-  if (value === null) return null;
+  if (value === null || value === undefined) return null;
   try { return decodeURIComponent(value); } catch (e) { return value; }
 }
 
-module.exports = function handler(req, res) {
-  var env = process.env;
-  var region = env.VERCEL_REGION || null;
+export default function handler(request) {
+  var headers = request.headers;
+  var env = (typeof process !== 'undefined' && process.env) || {};
+
+  // x-vercel-id is a colon-separated chain of the Vercel infrastructure that
+  // touched the request, e.g. "fra1::abc123" for an Edge Function answered
+  // straight from Frankfurt, or "iad1::cle1::abc123" when an edge PoP had to
+  // forward to a Node Function pinned elsewhere. Its first segment is the
+  // edge PoP that actually answered - which is what "closest region"
+  // really means here - so it's preferred over VERCEL_REGION, whose value
+  // for Edge Functions doesn't reliably name a specific PoP the way it does
+  // for Node Functions.
+  var vercelId = headers.get('x-vercel-id') || '';
+  var idParts = vercelId.split('::').filter(Boolean);
+  var edgeRegion = idParts.length ? idParts[0] : null;
+  var regionEnv = env.VERCEL_REGION || null;
+  var region = edgeRegion || regionEnv;
 
   var body = {
     ok: true,
@@ -55,6 +75,7 @@ module.exports = function handler(req, res) {
     environment: env.VERCEL_ENV || null,
     region: region,
     regionName: (region && REGION_NAMES[region]) || null,
+    regionSource: edgeRegion ? 'edge PoP that answered (x-vercel-id)' : (regionEnv ? 'VERCEL_REGION' : null),
     deployment: {
       id: env.VERCEL_DEPLOYMENT_ID || null,
       url: env.VERCEL_URL || null,
@@ -71,20 +92,23 @@ module.exports = function handler(req, res) {
       author: env.VERCEL_GIT_COMMIT_AUTHOR_LOGIN || null
     },
     runtime: {
-      node: process.version,
+      node: 'Vercel Edge Runtime (V8 isolate - not Node.js, so no process.version)',
       instanceStartedAt: INSTANCE_STARTED_AT
     },
     request: {
-      id: header(req, 'x-vercel-id'),
-      country: header(req, 'x-vercel-ip-country'),
-      countryRegion: header(req, 'x-vercel-ip-country-region'),
-      city: decoded(header(req, 'x-vercel-ip-city'))
+      id: vercelId || null,
+      country: headers.get('x-vercel-ip-country'),
+      countryRegion: headers.get('x-vercel-ip-country-region'),
+      city: decoded(headers.get('x-vercel-ip-city'))
     },
     serverTime: new Date().toISOString()
   };
 
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
-  res.end(JSON.stringify(body));
-};
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store'
+    }
+  });
+}
