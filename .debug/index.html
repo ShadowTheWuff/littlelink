@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 
 <!--
-  Dummy debug page. Nothing here is wired to a real build pipeline - the
-  "Build" values are placeholders, and the "Client" values are read from the
-  browser at page load and only ever displayed on this page. Nothing is sent
+  Debug page. The "Deployment" section is filled from /api/debug, a small
+  Vercel serverless function that reports the system environment it runs in
+  (region, deployment id, git commit). The "Client" values are read from the
+  browser at page load. Everything is display-only; nothing is stored or sent
   anywhere.
 
   To change the theme, change the class on the html tag below to one of:
@@ -136,16 +137,28 @@
 
         <h1>Debug</h1>
 
-        <p class="debug-note">Placeholder diagnostics page. The build values below are dummy entries, not real deployment metadata. The client values are read from your own browser when this page loads and are only shown here.</p>
+        <p class="debug-note">Deployment values come from <code>/api/debug</code>, which reads the environment Vercel gives the running function. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
 
-        <section aria-labelledby="build-heading">
-          <h2 id="build-heading">Build</h2>
+        <section aria-labelledby="deployment-heading">
+          <h2 id="deployment-heading">Deployment</h2>
           <table class="debug-table">
             <tbody>
-              <tr><th scope="row">Environment</th><td>placeholder</td></tr>
-              <tr><th scope="row">Build ID</th><td>0000000-dummy</td></tr>
-              <tr><th scope="row">Commit</th><td>&mdash;</td></tr>
-              <tr><th scope="row">Built at</th><td>&mdash;</td></tr>
+              <tr><th scope="row">Status</th><td id="dep-status">loading&hellip;</td></tr>
+              <tr><th scope="row">Host</th><td id="dep-host">&mdash;</td></tr>
+              <tr><th scope="row">Environment</th><td id="dep-env">&mdash;</td></tr>
+              <tr><th scope="row">Region</th><td id="dep-region">&mdash;</td></tr>
+              <tr><th scope="row">Deployment ID</th><td id="dep-id">&mdash;</td></tr>
+              <tr><th scope="row">Deployment URL</th><td id="dep-url">&mdash;</td></tr>
+              <tr><th scope="row">Branch</th><td id="dep-branch">&mdash;</td></tr>
+              <tr><th scope="row">Commit</th><td id="dep-commit">&mdash;</td></tr>
+              <tr><th scope="row">Commit message</th><td id="dep-message">&mdash;</td></tr>
+              <tr><th scope="row">Author</th><td id="dep-author">&mdash;</td></tr>
+              <tr><th scope="row">Runtime</th><td id="dep-node">&mdash;</td></tr>
+              <tr><th scope="row">Instance started</th><td id="dep-started">&mdash;</td></tr>
+              <tr><th scope="row">Server time</th><td id="dep-time">&mdash;</td></tr>
+              <tr><th scope="row">Request ID</th><td id="dep-reqid">&mdash;</td></tr>
+              <tr><th scope="row">Edge cache</th><td id="dep-cache">&mdash;</td></tr>
+              <tr><th scope="row">Edge geo</th><td id="dep-geo">&mdash;</td></tr>
             </tbody>
           </table>
         </section>
@@ -171,18 +184,89 @@
 
         <footer>
           <p class="notice">This is a restricted network. Use of this network, its equipment, and resources is monitored at all times and requires explicit permission from the network administrator. If you do not have this permission in writing, you are violating the regulations of this network and can and will be prosecuted to the full extent of the law. By continuing into this system, you are acknowledging that you are aware of and agree to these terms.</p>
-          <p class="cluster">cluster: prod-us-east-2</p>
+          <p class="cluster" data-cluster>cluster: &hellip;</p>
         </footer>
       </div>
     </main>
 
+    <script src="../js/cluster.js" defer></script>
     <script>
       (function () {
         var set = function (id, value) {
           var el = document.getElementById(id);
           if (el) { el.textContent = value; }
         };
+        var setLink = function (id, text, href) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          el.textContent = '';
+          var a = document.createElement('a');
+          a.href = href;
+          a.textContent = text;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          el.appendChild(a);
+        };
+        var or = function (value, fallback) {
+          return (value === null || value === undefined || value === '') ? (fallback || '—') : value;
+        };
         var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+        // Deployment - from the serverless function
+        fetch('/api/debug', { headers: { accept: 'application/json' } })
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json().then(function (info) {
+              return { info: info, headers: res.headers };
+            });
+          })
+          .then(function (result) {
+            var info = result.info;
+            var git = info.git || {};
+            var dep = info.deployment || {};
+            var rt = info.runtime || {};
+            var rq = info.request || {};
+
+            set('dep-status', 'ok');
+            set('dep-host', or(info.host));
+            set('dep-env', or(info.environment));
+            set('dep-region', info.region
+              ? info.region + (info.regionName ? ' (' + info.regionName + ')' : '')
+              : '—');
+            set('dep-id', or(dep.id));
+            if (dep.url) { setLink('dep-url', dep.url, 'https://' + dep.url); } else { set('dep-url', '—'); }
+            set('dep-branch', or(git.ref));
+            if (git.sha) {
+              var short = git.sha.slice(0, 7);
+              if (git.provider === 'github' && git.owner && git.repo) {
+                setLink('dep-commit', short, 'https://github.com/' + git.owner + '/' + git.repo + '/commit/' + git.sha);
+              } else {
+                set('dep-commit', short);
+              }
+            } else {
+              set('dep-commit', '—');
+            }
+            set('dep-message', or(git.message));
+            set('dep-author', or(git.author));
+            set('dep-node', or(rt.node));
+            set('dep-started', or(rt.instanceStartedAt));
+            set('dep-time', or(info.serverTime));
+            set('dep-reqid', or(rq.id || result.headers.get('x-vercel-id')));
+            set('dep-cache', or(result.headers.get('x-vercel-cache')));
+            var geo = [rq.city, rq.countryRegion, rq.country].filter(Boolean).join(', ');
+            set('dep-geo', geo || '—');
+
+            if (info.host !== 'vercel') {
+              set('dep-status', 'ok, but not running on Vercel - deployment fields are empty');
+            } else if (!info.region && !dep.id) {
+              set('dep-status', 'ok, but Vercel system environment variables are not exposed - enable "Automatically expose System Environment Variables" in the project settings');
+            }
+          })
+          .catch(function (err) {
+            set('dep-status', 'unavailable - could not reach /api/debug (' + err.message + ')');
+          });
+
+        // Client - from this browser
 
         set('dbg-url', window.location.href);
         set('dbg-time', new Date().toISOString());

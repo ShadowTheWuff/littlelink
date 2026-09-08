@@ -19,4 +19,6 @@ VERSION.md
 .claude
 .wrangler
 node_modules
+# Vercel serverless functions - source only, not a static asset
+api
 **/.DS_Store

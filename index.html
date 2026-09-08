@@ -147,11 +147,14 @@
       <!-- Feel free to add your own footer information, including updating `privacy.html` to reflect how your LittleLink fork is set up -->
       <footer>
         <a href="privacy.html">Privacy Policy</a> | <a href=".debug/">Debug</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink</a>
-        <p class="cluster">cluster: prod-us-east-2</p>
+        <p class="cluster" data-cluster>cluster: &hellip;</p>
       </footer>
 
     </div>
   </div>
+
+  <!-- Fills the cluster label in the footer from /api/debug -->
+  <script src="js/cluster.js" defer></script>
 
   <!-- Vercel Web Analytics -->
   <script>

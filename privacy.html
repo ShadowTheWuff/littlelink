@@ -126,10 +126,13 @@
 
         <footer>
           <p>Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
-          <p class="cluster">cluster: prod-us-east-2</p>
+          <p class="cluster" data-cluster>cluster: &hellip;</p>
         </footer>
       </div>
     </main>
+
+    <!-- Fills the cluster label in the footer from /api/debug -->
+    <script src="js/cluster.js" defer></script>
 
     <!-- Vercel Web Analytics -->
     <script>
