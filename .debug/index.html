@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 
 <!--
-  Debug page. The "Deployment" section is filled from /api/debug, a Vercel
-  Edge Function that reports the system environment it runs in (region,
-  deployment id, git commit). As an Edge Function it runs at whichever
-  Vercel PoP is closest to the visitor rather than one fixed region, so this
-  page's own Region row reflects the location that actually answered your
-  request. The "Client" values are read from the browser at page load.
-  Everything is display-only; nothing is stored or sent anywhere.
+  Debug page. The "Deployment" and "Edge API" sections are filled from the
+  utility endpoints on the nitro-starter deployment - Nitro running on
+  Vercel's vercel-edge preset, so they answer from whichever Vercel PoP is
+  closest to the visitor rather than one fixed region. That is why the Region
+  row names the location that actually answered your request. Those endpoints
+  used to live in this repo as /api/debug; js/api.js holds their base URL now.
+  The "Client" values are read from the browser at page load. Everything is
+  display-only; nothing is stored or sent anywhere.
 
   To change the theme, change the class on the html tag below to one of:
   - theme-auto: Automatically switches based on user's system preferences
@@ -139,7 +140,7 @@
 
         <h1>Debug</h1>
 
-        <p class="debug-note">Deployment values come from <code>/api/debug</code>, an Edge Function that runs at the Vercel location closest to you and reports the environment it ran in. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
+        <p class="debug-note">Deployment and edge API values come from the utility endpoints on the <code>nitro-starter</code> deployment, which run at the Vercel location closest to you and report the environment they ran in. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
 
         <section aria-labelledby="deployment-heading">
           <h2 id="deployment-heading">Deployment</h2>
@@ -160,8 +161,24 @@
               <tr><th scope="row">Instance started</th><td id="dep-started">&mdash;</td></tr>
               <tr><th scope="row">Server time</th><td id="dep-time">&mdash;</td></tr>
               <tr><th scope="row">Request ID</th><td id="dep-reqid">&mdash;</td></tr>
+              <tr><th scope="row">Edge chain</th><td id="dep-chain">&mdash;</td></tr>
               <tr><th scope="row">Edge cache</th><td id="dep-cache">&mdash;</td></tr>
               <tr><th scope="row">Edge geo</th><td id="dep-geo">&mdash;</td></tr>
+              <tr><th scope="row">Edge time zone</th><td id="dep-tz">&mdash;</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section aria-labelledby="api-heading">
+          <h2 id="api-heading">Edge API</h2>
+          <table class="debug-table">
+            <tbody>
+              <tr><th scope="row">API host</th><td id="api-host">&mdash;</td></tr>
+              <tr><th scope="row">Endpoints</th><td id="api-index">&mdash;</td></tr>
+              <tr><th scope="row">Health</th><td id="api-health">loading&hellip;</td></tr>
+              <tr><th scope="row">Clock skew</th><td id="api-skew">loading&hellip;</td></tr>
+              <tr><th scope="row">Your time zone</th><td id="api-localtime">loading&hellip;</td></tr>
+              <tr><th scope="row">Your address</th><td id="api-ip">loading&hellip;</td></tr>
             </tbody>
           </table>
         </section>
@@ -192,6 +209,7 @@
       </div>
     </main>
 
+    <script src="../js/api.js"></script>
     <script src="../js/cluster.js" defer></script>
     <script>
       (function () {
@@ -215,10 +233,14 @@
         };
         var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches;
 
-        // Deployment - from the serverless function
-        fetch('/api/debug', { headers: { accept: 'application/json' } })
+        var api = window.LittleLinkApi;
+        if (!api) {
+          set('dep-status', 'unavailable - js/api.js did not load');
+        }
+
+        // Deployment - from /api/debug on the edge deployment
+        api && api.request('/api/debug')
           .then(function (res) {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
             return res.json().then(function (info) {
               return { info: info, headers: res.headers };
             });
@@ -252,13 +274,17 @@
             }
             set('dep-message', or(git.message));
             set('dep-author', or(git.author));
-            set('dep-node', or(rt.node));
+            set('dep-node', rt.framework
+              ? or(rt.node) + ' via ' + rt.framework + (rt.preset ? ' (' + rt.preset + ')' : '')
+              : or(rt.node));
             set('dep-started', or(rt.instanceStartedAt));
             set('dep-time', or(info.serverTime));
             set('dep-reqid', or(rq.id || result.headers.get('x-vercel-id')));
             set('dep-cache', or(result.headers.get('x-vercel-cache')));
             var geo = [rq.city, rq.countryRegion, rq.country].filter(Boolean).join(', ');
             set('dep-geo', geo || '—');
+            set('dep-chain', (rq.chain && rq.chain.length) ? rq.chain.join(' → ') : '—');
+            set('dep-tz', or(rq.timezone));
 
             if (info.host !== 'vercel') {
               set('dep-status', 'ok, but not running on Vercel - deployment fields are empty');
@@ -267,8 +293,50 @@
             }
           })
           .catch(function (err) {
-            set('dep-status', 'unavailable - could not reach /api/debug (' + err.message + ')');
+            set('dep-status', 'unavailable - could not reach ' + api.url('/api/debug') + ' (' + err.message + ')');
           });
+
+        // Edge API - the utility endpoints alongside /api/debug. Each one is
+        // independent, so a failure only blanks its own row.
+        if (api) {
+          setLink('api-host', api.base.replace(/^https?:\/\//, ''), api.base);
+          setLink('api-index', '/api', api.url('/api'));
+
+          api.json('/api/health')
+            .then(function (health) {
+              var instance = health.instance || {};
+              var warm = typeof instance.uptimeMs === 'number'
+                ? ' (isolate warm ' + Math.round(instance.uptimeMs / 1000) + 's)'
+                : '';
+              set('api-health', or(health.status) + warm);
+            })
+            .catch(function (err) { set('api-health', 'unavailable (' + err.message + ')'); });
+
+          // Round trip measured here, so half of it is network latency; the
+          // skew is only meaningful to the nearest second or so.
+          var sentAt = Date.now();
+          api.json('/api/time')
+            .then(function (time) {
+              var roundTrip = Date.now() - sentAt;
+              var skew = time.epochMs - (sentAt + roundTrip / 2);
+              set('api-skew', Math.round(skew) + ' ms (round trip ' + roundTrip + ' ms)');
+              var tz = time.timezone || {};
+              set('api-localtime', tz.localTime
+                ? tz.localTime + ' — ' + or(tz.name)
+                : or(tz.name));
+            })
+            .catch(function (err) {
+              set('api-skew', 'unavailable (' + err.message + ')');
+              set('api-localtime', '—');
+            });
+
+          api.json('/api/ip')
+            .then(function (addr) {
+              var hops = (addr.forwardedFor || []).length;
+              set('api-ip', or(addr.ip) + (hops > 1 ? ' (' + hops + ' forwarded hops)' : ''));
+            })
+            .catch(function (err) { set('api-ip', 'unavailable (' + err.message + ')'); });
+        }
 
         // Client - from this browser
 
