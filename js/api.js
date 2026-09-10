@@ -10,8 +10,13 @@
 // The browser calls that deployment directly instead of going through a rewrite
 // here: a proxy hop would make the endpoint report the proxy's location rather
 // than yours. Responses carry no cookies and are sent with credentials omitted.
+//
+// It is addressed by its custom domain rather than the project's *.vercel.app
+// name for two reasons: the generated name sits behind the project's Vercel
+// Authentication setting, and a request to a sibling subdomain of this site is
+// far less likely to be caught by a content blocker than one to vercel.app.
 (function () {
-  var BASE = 'https://nitro-starter-three.vercel.app';
+  var BASE = 'https://api.shadowdewuff.gay';
   var WEBMASTER = 'webmaster@shadowdewuff.gay';
   var TIMEOUT_MS = 8000;
 
