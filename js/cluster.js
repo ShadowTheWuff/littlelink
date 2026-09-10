@@ -34,7 +34,7 @@
   // next page view tries again.
   function applyError(reason) {
     Array.prototype.forEach.call(labels, function (el) {
-      el.textContent = 'cluster: unavailable — email ';
+      el.textContent = 'cluster: unavailable, email ';
       if (window.LittleLinkApi) {
         el.appendChild(window.LittleLinkApi.reportLink('/api/debug', reason, WEBMASTER));
       } else {

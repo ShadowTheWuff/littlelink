@@ -109,7 +109,7 @@ To prove that bots are legitimate and verify their claimed identity, several met
 | adagiobot | advertising | Adagiobot is a web crawler that analyzes websites for advertising demand optimization, helping publishers maximize revenue through real-time bidding analysis and performance insights. AdagioBot fetches /ads.txt, /app-ads.txt and /sellers.json files to comply with IAB Supply Chain Validation. | [View](https://adagio-io.gitbook.io/adagio-documentation/general-configuration/update-your-app-ads.txt-file) |
 | adidxbot | advertising | AdIdxBot is the crawler used by Bing Ads for quality control of ads and their destination websites. It has multiple user agent variants including desktop, iPhone, and Windows Phone versions. | [View](https://www.bing.com/webmasters/help/which-crawlers-does-bing-use-8c184ec0) |
 | adsense | advertising | The AdSense crawler visits participating sites in order to provide them with relevant ads. | [View](https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers) |
-| adyen-webhook | webhook | Adyen's webhooks (Notification API) send encrypted, real-time HTTP callbacks for key payment and account events—automating order fulfillment, settlement reconciliation, and risk-management workflows. | [View](https://docs.adyen.com/development-resources/webhooks/secure-webhooks#domain-and-ip-addresses) |
+| adyen-webhook | webhook | Adyen's webhooks (Notification API) send encrypted, real-time HTTP callbacks for key payment and account events, automating order fulfillment, settlement reconciliation, and risk-management workflows. | [View](https://docs.adyen.com/development-resources/webhooks/secure-webhooks#domain-and-ip-addresses) |
 | ahrefsbot | search\_engine\_optimization | Powers the database for both Ahrefs, a marketing intelligence platform, and Yep, an independent, privacy-focused search engine. | [View](https://help.ahrefs.com/en/articles/78658-what-is-the-list-of-your-ip-ranges) |
 | ahrefssiteaudit | search\_engine\_optimization | Powers Ahrefs' Site Audit tool. Ahrefs users can use Site Audit to analyze websites and find both technical SEO and on-page SEO issues. | [View](https://help.ahrefs.com/en/articles/78658-what-is-the-list-of-your-ip-ranges) |
 | algolia | search\_engine\_crawler | The Algolia Crawler extracts content from your site and makes it searchable. | [View](https://www.algolia.com/doc/tools/crawler/getting-started/overview/) |
@@ -225,7 +225,7 @@ To prove that bots are legitimate and verify their claimed identity, several met
 | qstash | webhook | QStash is a platform for building event-driven applications. | [View](https://upstash.com/docs/qstash/howto/signature) |
 | quantcastbot | advertising | Quantcast Bot is a web crawler used for advertisement quality assurance and to understand page content for Interest-Based Audiences. | [View](https://www.quantcast.com/bot) |
 | qwantbot | search\_engine\_crawler | Crawls and indexes web content for Qwant search engine. | [View](https://help.qwant.com/bot/) |
-| razorpay-webhook | webhook | Razorpay's webhooks enable merchants to receive secure, real-time HTTP callbacks for key payment events—automating reconciliation, notifications, and downstream workflows. | [View](https://razorpay.com/docs/webhooks/) |
+| razorpay-webhook | webhook | Razorpay's webhooks enable merchants to receive secure, real-time HTTP callbacks for key payment events, automating reconciliation, notifications, and downstream workflows. | [View](https://razorpay.com/docs/webhooks/) |
 | redirect-pizza | monitor | redirect.pizza's destination monitor ensures that the redirect destination URLs are reachable. | [View](https://redirect.pizza/support/broken-destination-monitoring) |
 | amazon-route-53-health-check-service | monitor | Amazon Route 53 Health Check Service | [View](https://repost.aws/knowledge-center/route-53-fix-unwanted-health-checks) |
 | ryebot | ecommerce | Powers automated checkout on behalf of shoppers with explicit consent. | [View](https://docs.rye.com/api-v2-experimental/ryebot) |
@@ -270,23 +270,23 @@ Cross-link map: Bot Management (/docs/bot-management)
 
 ### Semantically closest pages
 
-- [How to Utilize Vercel's Bot Management Features](https://vercel.com/kb/guide/how-to-utilize-vercels-bot-management-features?from=graph) — A practical, step-by-step guide to identifying unwanted automated traffic and securing your Vercel apps with Bot Protect
-- [How to protect your AI app from bots](https://vercel.com/kb/guide/how-to-protect-your-ai-app-from-bots?from=graph) — Learn how to protect your AI app from bots, scrapers, and abuse using Firewall, BotID, and more.
-- [BotID](https://vercel.com/docs/botid?from=graph) — Protect your applications from automated attacks with intelligent bot detection and verification, powered by Kasada.
-- [How to protect your AI endpoints with Vercel BotID](https://vercel.com/kb/guide/protect-ai-endpoints-with-vercel-botid?from=graph) — Gate every request to your AI endpoints with Vercel BotID and checkBotId\(\) so inference runs only for verified callers
-- [How to block bots from OpenAI GPTBot](https://vercel.com/kb/guide/how-to-block-bots-openai-gptbot?from=graph) — Learn how to use the Vercel WAF to block, rate limit, or challenge traffic from OpenAI GPTBot.
+- [How to Utilize Vercel's Bot Management Features](https://vercel.com/kb/guide/how-to-utilize-vercels-bot-management-features?from=graph): A practical, step-by-step guide to identifying unwanted automated traffic and securing your Vercel apps with Bot Protect
+- [How to protect your AI app from bots](https://vercel.com/kb/guide/how-to-protect-your-ai-app-from-bots?from=graph): Learn how to protect your AI app from bots, scrapers, and abuse using Firewall, BotID, and more.
+- [BotID](https://vercel.com/docs/botid?from=graph): Protect your applications from automated attacks with intelligent bot detection and verification, powered by Kasada.
+- [How to protect your AI endpoints with Vercel BotID](https://vercel.com/kb/guide/protect-ai-endpoints-with-vercel-botid?from=graph): Gate every request to your AI endpoints with Vercel BotID and checkBotId\(\) so inference runs only for verified callers
+- [How to block bots from OpenAI GPTBot](https://vercel.com/kb/guide/how-to-block-bots-openai-gptbot?from=graph): Learn how to use the Vercel WAF to block, rate limit, or challenge traffic from OpenAI GPTBot.
 
 ### This page links to (9)
 
-- [Overview](https://vercel.com/docs/observability?from=graph) — Observability on Vercel provides framework-aware insights enabling you to optimize infrastructure and application perfor
-- [Reverse Proxy Servers and Vercel](https://vercel.com/docs/security/reverse-proxy?from=graph) — Learn why reverse proxy servers are not recommended with Vercel's firewall.
-- [Attack Mode](https://vercel.com/docs/vercel-firewall/attack-mode?from=graph) — Learn how to use Attack Mode to help control who has access to your site when it's under attack.
-- [DDoS Mitigation](https://vercel.com/docs/vercel-firewall/ddos-mitigation?from=graph) — Learn how the Vercel Firewall mitigates against DoS and DDoS attacks
-- [Firewall Concepts](https://vercel.com/docs/vercel-firewall/firewall-concepts?from=graph) — Understand the fundamentals behind the Vercel Firewall.
-- [Firewall Observability](https://vercel.com/docs/vercel-firewall/firewall-observability?from=graph) — Learn how firewall traffic monitoring and alerts help you react quickly to potential security threats.
-- [Custom Rules](https://vercel.com/docs/vercel-firewall/vercel-waf/custom-rules?from=graph) — Learn how to add and manage custom rules to configure the Vercel Web Application Firewall \(WAF\).
-- [Examples](https://vercel.com/docs/vercel-firewall/vercel-waf/examples?from=graph) — Learn how to use Vercel WAF to protect your site in specific situations.
-- [WAF Managed Rulesets](https://vercel.com/docs/vercel-firewall/vercel-waf/managed-rulesets?from=graph) — Learn how to use WAF Managed Rulesets with the Vercel Web Application Firewall \(WAF\)
+- [Overview](https://vercel.com/docs/observability?from=graph): Observability on Vercel provides framework-aware insights enabling you to optimize infrastructure and application perfor
+- [Reverse Proxy Servers and Vercel](https://vercel.com/docs/security/reverse-proxy?from=graph): Learn why reverse proxy servers are not recommended with Vercel's firewall.
+- [Attack Mode](https://vercel.com/docs/vercel-firewall/attack-mode?from=graph): Learn how to use Attack Mode to help control who has access to your site when it's under attack.
+- [DDoS Mitigation](https://vercel.com/docs/vercel-firewall/ddos-mitigation?from=graph): Learn how the Vercel Firewall mitigates against DoS and DDoS attacks
+- [Firewall Concepts](https://vercel.com/docs/vercel-firewall/firewall-concepts?from=graph): Understand the fundamentals behind the Vercel Firewall.
+- [Firewall Observability](https://vercel.com/docs/vercel-firewall/firewall-observability?from=graph): Learn how firewall traffic monitoring and alerts help you react quickly to potential security threats.
+- [Custom Rules](https://vercel.com/docs/vercel-firewall/vercel-waf/custom-rules?from=graph): Learn how to add and manage custom rules to configure the Vercel Web Application Firewall \(WAF\).
+- [Examples](https://vercel.com/docs/vercel-firewall/vercel-waf/examples?from=graph): Learn how to use Vercel WAF to protect your site in specific situations.
+- [WAF Managed Rulesets](https://vercel.com/docs/vercel-firewall/vercel-waf/managed-rulesets?from=graph): Learn how to use WAF Managed Rulesets with the Vercel Web Application Firewall \(WAF\)
 
 ### Pages that link here (21)
 
@@ -294,27 +294,27 @@ By site: vercel-kb (11) · vercel-docs (10)
 
 #### From vercel-kb
 
-- [How to prepare your storefront for Black Friday traffic](https://vercel.com/kb/guide/black-friday-preparation?from=graph) — A practical checklist for keeping your storefront fast and your checkout path healthy through Black Friday and Cyber Mon
-- [Should I use Cloudflare in front of Vercel?](https://vercel.com/kb/guide/cloudflare-with-vercel?from=graph) — Information on using Cloudflare together with Vercel.
-- [How to Effectively Load Test Your Vercel Application](https://vercel.com/kb/guide/how-to-effectively-load-test-your-vercel-application?from=graph) — Learn how to safely load test your Next.js app on Vercel. This guide covers realistic, policy-compliant testing of route
-- [How to protect your AI app from bots](https://vercel.com/kb/guide/how-to-protect-your-ai-app-from-bots?from=graph) — Learn how to protect your AI app from bots, scrapers, and abuse using Firewall, BotID, and more.
-- [How to Utilize Vercel's Bot Management Features](https://vercel.com/kb/guide/how-to-utilize-vercels-bot-management-features?from=graph) — A practical, step-by-step guide to identifying unwanted automated traffic and securing your Vercel apps with Bot Protect
-- [Vercel vs Akamai](https://vercel.com/kb/guide/vercel-vs-akamai?from=graph) — A detailed guide to Vercel vs Akamai: compute models, AI infrastructure, framework support, media streaming, CDN capabil
-- [Vercel vs Fastly](https://vercel.com/kb/guide/vercel-vs-fastly?from=graph) — A detailed guide to Vercel vs Fastly: full-stack application platform vs edge infrastructure layer, covering framework s
-- [Vercel vs Netlify](https://vercel.com/kb/guide/vercel-vs-netlify?from=graph) — A detailed guide to Vercel vs Netlify: runtimes, compute architecture, AI infrastructure, security, and when to choose e
-- [Vercel vs Northflank](https://vercel.com/kb/guide/vercel-vs-northflank?from=graph) — A detailed guide to Vercel vs Northflank: Fluid compute, CDN and caching, security defaults, AI infrastructure, GPU comp
-- [Vercel vs Railway](https://vercel.com/kb/guide/vercel-vs-railway?from=graph) — A detailed guide to Vercel vs Railway: serverless vs always-on containers, container images via Dockerfile.vercel, frame
-- [Vercel vs Render](https://vercel.com/kb/guide/vercel-vs-render?from=graph) — A detailed guide to Vercel vs Render: compute models, AI infrastructure, Docker support, background workers, and when to
+- [How to prepare your storefront for Black Friday traffic](https://vercel.com/kb/guide/black-friday-preparation?from=graph): A practical checklist for keeping your storefront fast and your checkout path healthy through Black Friday and Cyber Mon
+- [Should I use Cloudflare in front of Vercel?](https://vercel.com/kb/guide/cloudflare-with-vercel?from=graph): Information on using Cloudflare together with Vercel.
+- [How to Effectively Load Test Your Vercel Application](https://vercel.com/kb/guide/how-to-effectively-load-test-your-vercel-application?from=graph): Learn how to safely load test your Next.js app on Vercel. This guide covers realistic, policy-compliant testing of route
+- [How to protect your AI app from bots](https://vercel.com/kb/guide/how-to-protect-your-ai-app-from-bots?from=graph): Learn how to protect your AI app from bots, scrapers, and abuse using Firewall, BotID, and more.
+- [How to Utilize Vercel's Bot Management Features](https://vercel.com/kb/guide/how-to-utilize-vercels-bot-management-features?from=graph): A practical, step-by-step guide to identifying unwanted automated traffic and securing your Vercel apps with Bot Protect
+- [Vercel vs Akamai](https://vercel.com/kb/guide/vercel-vs-akamai?from=graph): A detailed guide to Vercel vs Akamai: compute models, AI infrastructure, framework support, media streaming, CDN capabil
+- [Vercel vs Fastly](https://vercel.com/kb/guide/vercel-vs-fastly?from=graph): A detailed guide to Vercel vs Fastly: full-stack application platform vs edge infrastructure layer, covering framework s
+- [Vercel vs Netlify](https://vercel.com/kb/guide/vercel-vs-netlify?from=graph): A detailed guide to Vercel vs Netlify: runtimes, compute architecture, AI infrastructure, security, and when to choose e
+- [Vercel vs Northflank](https://vercel.com/kb/guide/vercel-vs-northflank?from=graph): A detailed guide to Vercel vs Northflank: Fluid compute, CDN and caching, security defaults, AI infrastructure, GPU comp
+- [Vercel vs Railway](https://vercel.com/kb/guide/vercel-vs-railway?from=graph): A detailed guide to Vercel vs Railway: serverless vs always-on containers, container images via Dockerfile.vercel, frame
+- [Vercel vs Render](https://vercel.com/kb/guide/vercel-vs-render?from=graph): A detailed guide to Vercel vs Render: compute models, AI infrastructure, Docker support, background workers, and when to
 
 #### From vercel-docs
 
-- [Handling Verified Bots](https://vercel.com/docs/botid/verified-bots?from=graph) — Information about verified bots and their handling in BotID
-- [Security](https://vercel.com/docs/cdn-security?from=graph) — Learn how Vercel's CDN secures every request with HTTPS, TLS, DDoS mitigation, firewall protection, and security headers
-- [vercel firewall](https://vercel.com/docs/cli/firewall?from=graph) — Learn how to manage your project's custom firewall rules, IP blocks, system bypass rules, attack challenge mode, and sys
-- [Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation?from=graph) — Learn how to bypass Vercel Deployment Protection for automated tooling \(e.g. E2E testing\).
-- [Glossary](https://vercel.com/docs/glossary?from=graph) — Learn about the terms and concepts used in Vercel's products and documentation.
-- [How Vercel CDN works](https://vercel.com/docs/how-vercel-cdn-works?from=graph) — Learn how Vercel's CDN processes requests through routing, caching, and compute layers to deliver your content with low
-- [Products](https://vercel.com/docs/products?from=graph) — Explore all Vercel products and capabilities.
-- [sitemap.md](https://vercel.com/docs/sitemap.md?from=graph) — Learn about sitemap.md on Vercel.
-- [Attack Mode](https://vercel.com/docs/vercel-firewall/attack-mode?from=graph) — Learn how to use Attack Mode to help control who has access to your site when it's under attack.
-- [WAF Managed Rulesets](https://vercel.com/docs/vercel-firewall/vercel-waf/managed-rulesets?from=graph) — Learn how to use WAF Managed Rulesets with the Vercel Web Application Firewall \(WAF\)
+- [Handling Verified Bots](https://vercel.com/docs/botid/verified-bots?from=graph): Information about verified bots and their handling in BotID
+- [Security](https://vercel.com/docs/cdn-security?from=graph): Learn how Vercel's CDN secures every request with HTTPS, TLS, DDoS mitigation, firewall protection, and security headers
+- [vercel firewall](https://vercel.com/docs/cli/firewall?from=graph): Learn how to manage your project's custom firewall rules, IP blocks, system bypass rules, attack challenge mode, and sys
+- [Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation?from=graph): Learn how to bypass Vercel Deployment Protection for automated tooling \(e.g. E2E testing\).
+- [Glossary](https://vercel.com/docs/glossary?from=graph): Learn about the terms and concepts used in Vercel's products and documentation.
+- [How Vercel CDN works](https://vercel.com/docs/how-vercel-cdn-works?from=graph): Learn how Vercel's CDN processes requests through routing, caching, and compute layers to deliver your content with low
+- [Products](https://vercel.com/docs/products?from=graph): Explore all Vercel products and capabilities.
+- [sitemap.md](https://vercel.com/docs/sitemap.md?from=graph): Learn about sitemap.md on Vercel.
+- [Attack Mode](https://vercel.com/docs/vercel-firewall/attack-mode?from=graph): Learn how to use Attack Mode to help control who has access to your site when it's under attack.
+- [WAF Managed Rulesets](https://vercel.com/docs/vercel-firewall/vercel-waf/managed-rulesets?from=graph): Learn how to use WAF Managed Rulesets with the Vercel Web Application Firewall \(WAF\)
