@@ -124,6 +124,42 @@
         font-size:0.875rem;
       }
 
+      /* "Where this section comes from" line under each heading */
+      .debug-source {
+        margin:-0.25rem 0 0.75rem 0;
+        color:var(--debug-muted);
+        font-size:0.8125rem;
+        line-height:1.6;
+      }
+      .debug-source code {
+        font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+        word-break:break-all;
+      }
+
+      /* Admin-only controls, revealed after Sign in with Vercel */
+      .debug-admin {
+        margin:var(--spacing-m) 0;
+        padding:0.75rem 1rem;
+        background-color:var(--debug-surface);
+        border-radius:0.5rem;
+        color:var(--debug-muted);
+        font-size:0.8125rem;
+        line-height:1.7;
+      }
+      .debug-admin button {
+        font:inherit;
+        font-weight:600;
+        color:inherit;
+        padding:0.35rem 0.75rem;
+        margin-right:0.5rem;
+        background-color:transparent;
+        border:1px solid var(--debug-rule);
+        border-radius:0.375rem;
+        cursor:pointer;
+      }
+      .debug-admin button:hover:not([disabled]) { border-color:var(--debug-muted); }
+      .debug-admin button[disabled] { cursor:not-allowed; opacity:0.6; }
+
       /* Shown only when the edge API doesn't answer */
       .debug-error {
         margin:var(--spacing-m) 0;
@@ -157,12 +193,13 @@
 
         <h1>Debug</h1>
 
-        <p class="debug-note">Deployment and edge API values come from the utility endpoints on the <code>nitro-starter</code> deployment, which run at the Vercel location closest to you and report the environment they ran in. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
+        <p class="debug-note">This page holds no data of its own. Every value below is fetched, when you load the page, from the edge API at <a id="src-host" target="_blank" rel="noopener" href="https://api.shadowdewuff.gay"><code>api.shadowdewuff.gay</code></a> &mdash; a separate deployment (the <code>nitro-starter</code> project, Nitro on Vercel's <code>vercel-edge</code> preset) that runs at the Vercel location closest to you and reports the environment it ran in. The exception is the Client section, which is read from your own browser and never leaves it. Each section says which endpoint it came from. Everything here is display-only.</p>
 
         <p class="debug-error" id="api-error" role="alert" hidden></p>
 
         <section aria-labelledby="deployment-heading">
           <h2 id="deployment-heading">Deployment</h2>
+          <p class="debug-source">Pulled from <a class="src-endpoint" data-endpoint="/api/debug" data-label="full" target="_blank" rel="noopener" href="https://api.shadowdewuff.gay/api/debug"><code>GET api.shadowdewuff.gay/api/debug</code></a>. Describes the deployment that answered <em>that</em> request &mdash; the API &mdash; not this page's own hosting.</p>
           <table class="debug-table">
             <tbody>
               <tr><th scope="row">Status</th><td id="dep-status">loading&hellip;</td></tr>
@@ -190,6 +227,7 @@
 
         <section aria-labelledby="api-heading">
           <h2 id="api-heading">Edge API</h2>
+          <p class="debug-source">Pulled from three more endpoints on the same host: <a class="src-endpoint" data-endpoint="/api/health" target="_blank" rel="noopener" href="https://api.shadowdewuff.gay/api/health"><code>/api/health</code></a>, <a class="src-endpoint" data-endpoint="/api/time" target="_blank" rel="noopener" href="https://api.shadowdewuff.gay/api/time"><code>/api/time</code></a> and <a class="src-endpoint" data-endpoint="/api/ip" target="_blank" rel="noopener" href="https://api.shadowdewuff.gay/api/ip"><code>/api/ip</code></a>, each requested independently. The last row comes from <a class="src-endpoint" data-endpoint="/api/session" target="_blank" rel="noopener" href="https://api.shadowdewuff.gay/api/session"><code>/api/session</code></a>, the one endpoint that reads a cookie.</p>
           <table class="debug-table">
             <tbody>
               <tr><th scope="row">API host</th><td id="api-host">&mdash;</td></tr>
@@ -198,12 +236,19 @@
               <tr><th scope="row">Clock skew</th><td id="api-skew">loading&hellip;</td></tr>
               <tr><th scope="row">Your time zone</th><td id="api-localtime">loading&hellip;</td></tr>
               <tr><th scope="row">Your address</th><td id="api-ip">loading&hellip;</td></tr>
+              <tr><th scope="row">Signed in as</th><td id="api-session">checking&hellip;</td></tr>
             </tbody>
           </table>
+
+          <p class="debug-admin" id="admin-controls">
+            <button type="button" id="test-banner" disabled>Test the API-down banner</button>
+            <span id="admin-note">Checking whether you're signed in&hellip;</span>
+          </p>
         </section>
 
         <section aria-labelledby="client-heading">
           <h2 id="client-heading">Client</h2>
+          <p class="debug-source">Read from your own browser at page load. No request is made for any of it, and none of it is sent anywhere.</p>
           <table class="debug-table">
             <tbody>
               <tr><th scope="row">Page URL</th><td id="dbg-url">&mdash;</td></tr>
@@ -278,6 +323,30 @@
         if (!api) {
           set('dep-status', 'unavailable - js/api.js did not load');
           showApiError('/api/debug', 'js/api.js did not load');
+        }
+
+        // The "pulled from" lines ship with the expected host written into the
+        // markup, so they still read correctly if this script never runs. The
+        // real base URL lives in js/api.js though, so rewrite them from it -
+        // otherwise the page could name one host while fetching from another.
+        if (api) {
+          var apiHost = api.base.replace(/^https?:\/\//, '');
+          var hostLink = document.getElementById('src-host');
+          if (hostLink) {
+            hostLink.href = api.base;
+            hostLink.textContent = '';
+            hostLink.appendChild(document.createElement('code')).textContent = apiHost;
+          }
+          Array.prototype.forEach.call(document.querySelectorAll('.src-endpoint'), function (el) {
+            var path = el.getAttribute('data-endpoint');
+            var code = el.querySelector('code');
+            el.href = api.url(path);
+            if (code) {
+              code.textContent = el.getAttribute('data-label') === 'full'
+                ? 'GET ' + apiHost + path
+                : path;
+            }
+          });
         }
 
         // Deployment - from /api/debug on the edge deployment
@@ -379,6 +448,104 @@
               set('api-ip', or(addr.ip) + (hops > 1 ? ' (' + hops + ' forwarded hops)' : ''));
             })
             .catch(function (err) { set('api-ip', 'unavailable (' + err.message + ')'); });
+        }
+
+        // Admin controls - gated on Sign in with Vercel.
+        //
+        // The gate is the API's answer, not anything this page decides: the
+        // session cookie is httpOnly and signed, so the browser can't inspect
+        // or forge it, and every check asks /api/session again rather than
+        // trusting an earlier reply. The test itself only redraws this page in
+        // your own browser - nothing is sent, and no one else sees it.
+        if (api) {
+          var testButton = document.getElementById('test-banner');
+          var adminNote = document.getElementById('admin-note');
+
+          var SIGNIN_MESSAGES = {
+            ok: 'Signed in.',
+            denied: 'Sign-in was cancelled.',
+            'not-authorized': 'That Vercel account is not on the admin list.',
+            'not-configured': 'Admin sign-in is not configured on the API yet.',
+            expired: 'That sign-in attempt timed out. Try again.'
+          };
+
+          function noteText(text) {
+            adminNote.textContent = '';
+            adminNote.appendChild(document.createTextNode(text));
+          }
+
+          function noteLink(text, href, linkText, trailing) {
+            noteText(text);
+            var a = document.createElement('a');
+            a.href = href;
+            a.textContent = linkText;
+            adminNote.appendChild(a);
+            if (trailing) { adminNote.appendChild(document.createTextNode(trailing)); }
+          }
+
+          // Report the outcome of a sign-in we've just come back from, then
+          // drop the parameter so a refresh doesn't repeat the message.
+          var params = new URLSearchParams(window.location.search);
+          var signin = params.get('signin');
+          if (signin && window.history.replaceState) {
+            params.delete('signin');
+            var rest = params.toString();
+            window.history.replaceState({}, '', window.location.pathname + (rest ? '?' + rest : ''));
+          }
+
+          function renderSession(session) {
+            if (!session.configured) {
+              set('api-session', 'sign-in not configured');
+              testButton.disabled = true;
+              noteText('Admin sign-in is not configured on the API, so this test is unavailable.');
+              return;
+            }
+            if (!session.authenticated) {
+              set('api-session', 'nobody');
+              testButton.disabled = true;
+              noteLink(
+                (signin && SIGNIN_MESSAGES[signin]) || (signin ? 'Sign-in failed (' + signin + '). ' : ''),
+                api.loginUrl(window.location.href),
+                'Sign in with Vercel',
+                ' to enable the banner test.'
+              );
+              return;
+            }
+
+            var user = session.user || {};
+            var who = user.name ? user.name + ' (' + user.login + ')' : user.login;
+            set('api-session', who);
+            testButton.disabled = false;
+            noteLink('Signed in as ' + who + '. ', api.logoutUrl(window.location.href), 'Sign out', '.');
+          }
+
+          api.session().then(renderSession);
+
+          testButton.addEventListener('click', function () {
+            testButton.disabled = true;
+            noteText('Checking your session\u2026');
+
+            // Re-check rather than trusting the reply from page load: a session
+            // that was valid a few minutes ago may have expired since.
+            api.session().then(function (session) {
+              if (!session.authenticated) {
+                renderSession(session);
+                return;
+              }
+
+              var reason = 'simulated failure - triggered from this page by '
+                + ((session.user && session.user.login) || 'an admin');
+              showApiError('/api/debug', reason);
+              window.dispatchEvent(new CustomEvent('ll:cluster-error', { detail: { reason: reason } }));
+
+              noteText('Showing the banner as it appears when the API is down. Nothing is actually broken.');
+              testButton.textContent = 'Clear the test';
+              testButton.disabled = false;
+              testButton.addEventListener('click', function () {
+                window.location.reload();
+              }, { once: true });
+            });
+          }, { once: true });
         }
 
         // Client - from this browser
