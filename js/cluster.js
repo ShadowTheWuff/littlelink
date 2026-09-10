@@ -78,4 +78,10 @@
     .catch(function (err) {
       applyError('Could not reach ' + window.LittleLinkApi.url('/api/debug') + ': ' + err.message);
     });
+
+  // The debug page's admin-only test drives the label through this, so the
+  // failure state it shows is the real one rather than a lookalike.
+  window.addEventListener('ll:cluster-error', function (event) {
+    applyError((event.detail && event.detail.reason) || 'simulated failure');
+  });
 })();

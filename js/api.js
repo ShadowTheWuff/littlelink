@@ -81,6 +81,34 @@
       });
     },
 
+    // Who, if anyone, is signed in through Sign in with Vercel. Sent with
+    // credentials so the admin cookie travels: this site and the API are
+    // different origins but the same site (both under shadowdewuff.gay), so a
+    // SameSite=Lax cookie is included. Never rejects - a failure here just
+    // means "not signed in", which is the safe reading.
+    session: function () {
+      return fetch(BASE + '/api/session', {
+        headers: { accept: 'application/json' },
+        mode: 'cors',
+        credentials: 'include',
+        cache: 'no-store'
+      }).then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      }).catch(function () {
+        return { ok: false, configured: false, authenticated: false, user: null };
+      });
+    },
+
+    // Where to send someone to sign in, coming back to this exact page.
+    loginUrl: function (returnTo) {
+      return BASE + '/auth/vercel/start?return=' + encodeURIComponent(returnTo || window.location.href);
+    },
+
+    logoutUrl: function (returnTo) {
+      return BASE + '/auth/vercel/logout?return=' + encodeURIComponent(returnTo || window.location.href);
+    },
+
     // A mailto: with the diagnostics already filled in, so a report arrives
     // with something to act on rather than "the site is broken".
     reportUrl: reportUrl,
