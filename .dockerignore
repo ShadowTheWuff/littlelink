@@ -19,6 +19,8 @@ wrangler.toml
 README.md
 LICENSE.md
 VERSION.md
+ai.md
+.vercelignore
 
 # Logs
 *.log
