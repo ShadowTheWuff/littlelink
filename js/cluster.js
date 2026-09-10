@@ -16,6 +16,7 @@
   if (!labels.length) return;
 
   var STORAGE_KEY = 'll-cluster';
+  var WEBMASTER = 'webmaster@shadowdewuff.gay';
   var TTL_MS = 5 * 60 * 1000;
   var ENV_SHORT = { production: 'prod', preview: 'preview', development: 'dev' };
 
@@ -23,6 +24,26 @@
     Array.prototype.forEach.call(labels, function (el) {
       el.textContent = 'cluster: ' + text;
       if (title) { el.title = title; } else { el.removeAttribute('title'); }
+    });
+  }
+
+  // The API is a separate deployment, so it can be down while this page is
+  // perfectly fine. Say so in the label itself and offer somewhere to report
+  // it, rather than leaving the placeholder sitting there looking like a page
+  // that never finished loading. Failures are deliberately not cached, so the
+  // next page view tries again.
+  function applyError(reason) {
+    Array.prototype.forEach.call(labels, function (el) {
+      el.textContent = 'cluster: unavailable — email ';
+      if (window.LittleLinkApi) {
+        el.appendChild(window.LittleLinkApi.reportLink('/api/debug', reason, WEBMASTER));
+      } else {
+        var a = document.createElement('a');
+        a.href = 'mailto:' + WEBMASTER;
+        a.textContent = WEBMASTER;
+        el.appendChild(a);
+      }
+      el.title = reason;
     });
   }
 
@@ -41,7 +62,7 @@
   } catch (e) { /* no usable cache; fall through to fetch */ }
 
   if (!window.LittleLinkApi) {
-    apply('unavailable', 'js/api.js did not load');
+    applyError('js/api.js did not load');
     return;
   }
 
@@ -54,7 +75,7 @@
       apply(text, title);
       remember(text, title);
     })
-    .catch(function () {
-      apply('unavailable', 'Could not reach ' + window.LittleLinkApi.url('/api/debug'));
+    .catch(function (err) {
+      applyError('Could not reach ' + window.LittleLinkApi.url('/api/debug') + ': ' + err.message);
     });
 })();

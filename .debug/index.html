@@ -74,17 +74,23 @@
         --debug-muted:#5a5a5a;
         --debug-rule:#e4e4e4;
         --debug-surface:#f7f7f7;
+        --debug-alert-surface:#fdf2f2;
+        --debug-alert-rule:#e5c1c1;
       }
       :root.theme-dark {
         --debug-muted:#a0a0a0;
         --debug-rule:#2e2e2e;
         --debug-surface:#1c1c1c;
+        --debug-alert-surface:#2a1d1d;
+        --debug-alert-rule:#5a3838;
       }
       @media (prefers-color-scheme:dark) {
         :root.theme-auto {
           --debug-muted:#a0a0a0;
           --debug-rule:#2e2e2e;
           --debug-surface:#1c1c1c;
+          --debug-alert-surface:#2a1d1d;
+          --debug-alert-rule:#5a3838;
         }
       }
 
@@ -118,6 +124,17 @@
         font-size:0.875rem;
       }
 
+      /* Shown only when the edge API doesn't answer */
+      .debug-error {
+        margin:var(--spacing-m) 0;
+        padding:0.75rem 1rem;
+        background-color:var(--debug-alert-surface);
+        border:1px solid var(--debug-alert-rule);
+        border-radius:0.5rem;
+        font-size:0.875rem;
+        line-height:1.6;
+      }
+
       /* Network use banner */
       .notice {
         margin:var(--spacing-xxl) 0 var(--spacing-l) 0;
@@ -141,6 +158,8 @@
         <h1>Debug</h1>
 
         <p class="debug-note">Deployment and edge API values come from the utility endpoints on the <code>nitro-starter</code> deployment, which run at the Vercel location closest to you and report the environment they ran in. Client values are read from your own browser when this page loads. Everything here is display-only.</p>
+
+        <p class="debug-error" id="api-error" role="alert" hidden></p>
 
         <section aria-labelledby="deployment-heading">
           <h2 id="deployment-heading">Deployment</h2>
@@ -234,8 +253,31 @@
         var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches;
 
         var api = window.LittleLinkApi;
+
+        // The edge API is a separate deployment, so it can be down while this
+        // page loads perfectly well. When that happens, say so once at the top
+        // with somewhere to report it - the rows below will be blank and that
+        // on its own doesn't tell anyone what to do about it.
+        function showApiError(path, reason) {
+          var box = document.getElementById('api-error');
+          if (!box) return;
+          box.textContent = 'The edge API did not answer (' + reason + '), so the values below are incomplete. '
+            + 'This page is fine; the API it asks is not. If it keeps happening, email ';
+          if (api) {
+            box.appendChild(api.reportLink(path, reason, api.webmaster));
+          } else {
+            var a = document.createElement('a');
+            a.href = 'mailto:webmaster@shadowdewuff.gay';
+            a.textContent = 'webmaster@shadowdewuff.gay';
+            box.appendChild(a);
+          }
+          box.appendChild(document.createTextNode('.'));
+          box.hidden = false;
+        }
+
         if (!api) {
           set('dep-status', 'unavailable - js/api.js did not load');
+          showApiError('/api/debug', 'js/api.js did not load');
         }
 
         // Deployment - from /api/debug on the edge deployment
@@ -294,6 +336,7 @@
           })
           .catch(function (err) {
             set('dep-status', 'unavailable - could not reach ' + api.url('/api/debug') + ' (' + err.message + ')');
+            showApiError('/api/debug', err.message);
           });
 
         // Edge API - the utility endpoints alongside /api/debug. Each one is
