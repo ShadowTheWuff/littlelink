@@ -124,6 +124,45 @@
           </ul>
         </section>
 
+        <section aria-labelledby="api-heading">
+          <h2 id="api-heading">Diagnostics API</h2>
+          <p>This website calls a small diagnostics API of the Owner's own, at <a href="https://api.shadowdewuff.gay" target="_blank" rel="noopener">api.shadowdewuff.gay</a>. It reports which Vercel location served a request, so the Owner can tell where and how the site is being delivered. It is a separate deployment from this website, run by the same Owner on the same infrastructure provider.</p>
+          <p>Every page requests <code>/api/debug</code> once when it loads, to fill in the &ldquo;cluster&rdquo; label at the foot of the page. The <a href="/.debug/">debug page</a> additionally requests <code>/api/health</code>, <code>/api/time</code>, <code>/api/ip</code> and <code>/api/session</code>. No other page requests anything else.</p>
+
+          <h3>What the API processes</h3>
+          <p>Answering any web request necessarily involves the following. The API receives it, uses it to compose a reply, and discards it.</p>
+          <ul role="list">
+            <li>IP address, as seen by the infrastructure provider's network</li>
+            <li>Approximate location derived from that address by the provider &mdash; country, region, city and city-level coordinates. It is not precise, and no location permission is requested from the browser</li>
+            <li>Time zone, as inferred from the same address</li>
+            <li>Request headers, including the browser's user agent</li>
+          </ul>
+          <p>The reply is sent to the User's own browser and is displayed there. On the debug page the User can see the whole of it.</p>
+
+          <h3>Purpose and legal basis</h3>
+          <p>The purpose is operating and diagnosing this website: knowing which edge location answered a request is how the Owner tells a local fault from a general one. Under Article 6(1)(f) of the GDPR the legal basis is the Owner's legitimate interest in keeping the site working and diagnosable. The processing is limited to what a web request unavoidably carries, and nothing is combined with anything else, used to build a profile, or used to make decisions about anyone.</p>
+
+          <h3>Retention</h3>
+          <p>The Owner keeps none of it. Each reply is composed fresh from the incoming request and marked <code>no-store</code>; there is no database, no log file and no analytics behind these endpoints. The infrastructure provider may retain operational request logs of its own as the Owner's processor, under its own terms, in the ordinary course of running the servers.</p>
+
+          <h3>Storage on the User's device</h3>
+          <p>The result of the <code>/api/debug</code> call is kept in the browser's <code>sessionStorage</code>, under the key <code>ll-cluster</code>, for five minutes, so moving between pages does not repeat the request. It never leaves the device and is discarded when the tab is closed. Clearing site data removes it.</p>
+          <p>The API sets no cookies for ordinary visitors. Cookies are set only when the Owner signs in to administer the site, through Sign in with Vercel; those are strictly necessary for that sign-in and are never set for anyone who does not use it.</p>
+
+          <h3>Where it runs</h3>
+          <p>The API runs on Vercel's edge network and is answered from the location nearest the User, which for Users in the EU or EEA means an edge location in or near that region. Vercel Inc. is established in the United States and is the Owner's processor for this; transfers outside the EEA are covered by the Standard Contractual Clauses in Vercel's data processing agreement.</p>
+          <ul role="list">
+            <li><a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Vercel privacy policy</a></li>
+            <li><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">Vercel data processing addendum</a></li>
+          </ul>
+
+          <h3>Seeing it for yourself</h3>
+          <p>These endpoints are readable. <a href="https://api.shadowdewuff.gay/api" target="_blank" rel="noopener">api.shadowdewuff.gay/api</a> lists them, and each returns exactly what this section describes and nothing more. What the API knows about a User is precisely what it returns to them.</p>
+
+          <h3>Rights</h3>
+          <p>Users in the EU or EEA have the right to access, rectify, erase, restrict and object to processing of their personal data, and to data portability. Because nothing from these endpoints is retained by the Owner, there is generally nothing held to retrieve, correct or erase; a request for operational logs held by the infrastructure provider will be passed on. Requests and objections can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>. Users also have the right to lodge a complaint with their national data protection supervisory authority.</p>
+        </section>
+
         <footer>
           <p>Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
           <p class="cluster" data-cluster>cluster: &hellip;</p>
