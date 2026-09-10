@@ -15,9 +15,6 @@ wrangler.toml
 .assetsignore
 .dockerignore
 
-# Vercel serverless functions (source only, nothing to serve statically)
-api
-
 # Documentation
 README.md
 LICENSE.md
