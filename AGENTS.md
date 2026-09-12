@@ -20,11 +20,25 @@ utility pages, deployed to Vercel from `main`.
   here, not to `brands.css`**, unless you're patching a class that
   already exists in `brands.css`.
 - `images/icons/` — square (usually 24×24) SVG icons for buttons.
+  Sorted into category subfolders by platform type: `social`, `gaming`,
+  `music`, `video`, `creative`, `writing`, `dev`, `shopping`, `finance`,
+  `productivity`, `professional`, `generic` (the non-brand
+  `generic-*.svg` fallback icons), and `other` (anything that didn't
+  cleanly fit). A button's `<img src>` therefore looks like
+  `images/icons/gaming/steam.svg`, not `images/icons/steam.svg`.
 - `images/icons-extended/` — icons for brands added in this fork,
-  mirroring `brands-extended.css`. Either icons directory is fine in
-  practice; recent additions used `images/icons/` even for
-  fork-specific buttons, so match whichever the button's CSS home is if
-  in doubt, but don't stress over it.
+  mirroring `brands-extended.css`. Sorted into the same category
+  subfolders, independently of `images/icons/` — the two trees are kept
+  separate (not merged into one categorized tree) specifically because
+  several brands have same-named icon files in both directories
+  (`vrchat.svg`, `behance.svg`, etc.); merging them would collide.
+  Which of the two top-level directories a new icon goes in should
+  match wherever its button's CSS rule lives (`brands.css` →
+  `images/icons/`, `brands-extended.css` → `images/icons-extended/`),
+  then sort into a category subfolder within that.
+- When adding a new category is a genuine judgment call (an icon
+  doesn't obviously fit an existing one), it's fine to add one — just
+  keep the same lowercase, one-word style as the existing folders.
 - `api/` — Vercel Functions. Currently just `api/debug.js`, which backs
   `.debug/index.html` and the `cluster:` footer label. See "Vercel
   Functions" below before touching this.
@@ -78,7 +92,7 @@ This is the most common task in this repo. Steps, in order:
    with an HTML comment naming the brand above it:
    ```html
    <!-- Brand Name -->
-   <a class="button button-brand-name" href="..." target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/brand-name.svg" alt="Brand Name Logo">Brand Name</a>
+   <a class="button button-brand-name" href="..." target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/<category>/brand-name.svg" alt="Brand Name Logo">Brand Name</a>
    ```
    If asked to add a button with no real profile URL yet, use an
    obviously-placeholder link (e.g. `https://service.com/profile/example`)
