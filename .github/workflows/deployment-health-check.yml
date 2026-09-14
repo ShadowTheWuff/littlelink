@@ -1,0 +1,138 @@
+name: Deployment health check
+
+# Vercel reports each deployment back to GitHub as a deployment_status event,
+# so this runs against the real deployment instead of guessing a URL.
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      health_url:
+        description: Health endpoint to probe
+        required: false
+        default: https://api.shadowdewuff.gay/api/health
+
+permissions:
+  contents: read
+
+concurrency:
+  group: health-check-${{ github.event.deployment_status.environment_url || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  health:
+    # deployment_status fires on every state transition (pending, error,
+    # success); only a finished deployment is worth probing.
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      BASE_URL: ${{ github.event.deployment_status.environment_url }}
+      HEALTH_URL: ${{ inputs.health_url || 'https://api.shadowdewuff.gay/api/health' }}
+      ATTEMPTS: '5'
+    steps:
+      # Preview deployments sit behind Vercel deployment protection, so the
+      # bypass secret is what keeps this from being a 401 against every PR.
+      - name: Check deployment URL
+        if: env.BASE_URL != ''
+        run: |
+          set -uo pipefail
+
+          bypass=()
+          if [ -n "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            bypass=(-H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"
+                    -H 'x-vercel-set-bypass-cookie: true')
+          else
+            echo "::notice::VERCEL_AUTOMATION_BYPASS_SECRET is not set; a protected deployment will answer 401"
+          fi
+
+          code=""
+          for attempt in $(seq 1 "$ATTEMPTS"); do
+            echo "Attempt $attempt/$ATTEMPTS: GET $BASE_URL"
+            code=$(curl -sS -m 15 -o /dev/null -w '%{http_code}' \
+              "${bypass[@]}" \
+              -H 'User-Agent: github-actions-health-check' \
+              "$BASE_URL" || true)
+            case "$code" in 2??|3??) break ;; esac
+            echo "  -> HTTP ${code:-no response}"
+            if [ "$attempt" -lt "$ATTEMPTS" ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          case "$code" in
+            2??|3??)
+              echo "Deployment reachable: HTTP $code"
+              ;;
+            401|403)
+              echo "::error::$BASE_URL returned HTTP $code - the deployment is protected and VERCEL_AUTOMATION_BYPASS_SECRET is missing or stale"
+              exit 1
+              ;;
+            *)
+              echo "::error::$BASE_URL returned HTTP ${code:-no response} after $ATTEMPTS attempts"
+              exit 1
+              ;;
+          esac
+
+          echo "DEPLOYMENT_CODE=$code" >> "$GITHUB_ENV"
+
+      - name: Probe API health
+        run: |
+          set -uo pipefail
+
+          body=""
+          code=""
+          for attempt in $(seq 1 "$ATTEMPTS"); do
+            echo "Attempt $attempt/$ATTEMPTS: GET $HEALTH_URL"
+            response=$(curl -sS -m 15 -w $'\n%{http_code}' \
+              -H 'Accept: application/json' \
+              -H 'User-Agent: github-actions-health-check' \
+              "$HEALTH_URL" || true)
+            code="${response##*$'\n'}"
+            body="${response%$'\n'*}"
+            [ "$code" = "200" ] && break
+            echo "  -> HTTP ${code:-no response}"
+            if [ "$attempt" -lt "$ATTEMPTS" ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ "$code" != "200" ]; then
+            echo "::error::$HEALTH_URL returned HTTP ${code:-no response} after $ATTEMPTS attempts"
+            echo "$body" | head -c 2000
+            exit 1
+          fi
+
+          # The endpoint answers with JSON ({ status, instance: { uptimeMs } }),
+          # so a 200 carrying an unhealthy status still fails the job. A 200 that
+          # is not JSON, or has no status field, counts as healthy on its own.
+          status=$(printf '%s' "$body" | jq -r '.status // empty' 2>/dev/null || true)
+          if [ -n "$status" ]; then
+            case "$(printf '%s' "$status" | tr '[:upper:]' '[:lower:]')" in
+              ok|up|pass|healthy|alive|ready) ;;
+              *)
+                echo "::error::$HEALTH_URL is reachable but reports status \"$status\""
+                printf '%s' "$body" | head -c 2000
+                exit 1
+                ;;
+            esac
+          fi
+
+          uptime=$(printf '%s' "$body" | jq -r '.instance.uptimeMs // empty' 2>/dev/null || true)
+          region=$(printf '%s' "$body" | jq -r '.instance.region // .region // empty' 2>/dev/null || true)
+
+          echo "Healthy: HTTP 200${status:+, status $status}"
+          {
+            echo "### API health check ✅"
+            echo
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Endpoint | \`$HEALTH_URL\` |"
+            echo "| HTTP | \`$code\` |"
+            echo "| Status | \`${status:-n/a}\` |"
+            [ -n "$uptime" ] && echo "| Isolate warm | \`$((uptime / 1000))s\` |"
+            [ -n "$region" ] && echo "| Region | \`$region\` |"
+            if [ -n "$BASE_URL" ]; then
+              echo "| Deployment | $BASE_URL (HTTP \`${DEPLOYMENT_CODE:-n/a}\`) |"
+              echo "| Environment | \`${{ github.event.deployment.environment || 'n/a' }}\` |"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
