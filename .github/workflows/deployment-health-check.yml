@@ -3,6 +3,7 @@ name: Deployment health check
 # Vercel reports each deployment back to GitHub as a deployment_status event,
 # so this runs against the real deployment instead of guessing a URL.
 on:
+  push:
   deployment_status:
   workflow_dispatch:
     inputs:
@@ -15,14 +16,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: health-check-${{ github.event.deployment_status.environment_url || github.ref }}
+  group: health-check-${{ github.event.deployment_status.environment_url || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
   health:
     # deployment_status fires on every state transition (pending, error,
-    # success); only a finished deployment is worth probing.
-    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    # success); only a finished deployment is worth probing. Pushes and manual
+    # runs have no deployment attached and always run.
+    if: github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     env:
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -30,8 +32,10 @@ jobs:
       HEALTH_URL: ${{ inputs.health_url || 'https://api.shadowdewuff.gay/api/health' }}
       ATTEMPTS: '5'
     steps:
-      # Preview deployments sit behind Vercel deployment protection, so the
-      # bypass secret is what keeps this from being a 401 against every PR.
+      # Only a deployment_status event carries a URL, so this step sits out a
+      # push or a manual run and the API check below carries the job. Preview
+      # deployments sit behind Vercel deployment protection, so the bypass
+      # secret is what keeps this from being a 401 against every PR.
       - name: Check deployment URL
         if: env.BASE_URL != ''
         run: |
