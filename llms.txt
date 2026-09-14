@@ -9,7 +9,6 @@ Links out to profiles on VRChat, Steam, Last.fm, AniList, Tracker Network, Medal
 - [Home](https://me.shadowdewuff.gay/): the link list
 - [Privacy Policy](https://me.shadowdewuff.gay/privacy): data collection, cookies, and the diagnostics API
 - [Terms of Service](https://me.shadowdewuff.gay/tos): terms of use
-- [Impressum](https://me.shadowdewuff.gay/impressum): legal notice
 
 ## Notes
 
