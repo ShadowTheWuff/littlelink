@@ -4,6 +4,7 @@ name: Deployment health check
 # so this runs against the real deployment instead of guessing a URL.
 on:
   push:
+    branches: [main]
   deployment_status:
   workflow_dispatch:
     inputs:
