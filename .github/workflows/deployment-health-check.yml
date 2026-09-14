@@ -25,9 +25,56 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     env:
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      BASE_URL: ${{ github.event.deployment_status.environment_url }}
       HEALTH_URL: ${{ inputs.health_url || 'https://api.shadowdewuff.gay/api/health' }}
       ATTEMPTS: '5'
     steps:
+      # Preview deployments sit behind Vercel deployment protection, so the
+      # bypass secret is what keeps this from being a 401 against every PR.
+      - name: Check deployment URL
+        if: env.BASE_URL != ''
+        run: |
+          set -uo pipefail
+
+          bypass=()
+          if [ -n "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            bypass=(-H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"
+                    -H 'x-vercel-set-bypass-cookie: true')
+          else
+            echo "::notice::VERCEL_AUTOMATION_BYPASS_SECRET is not set; a protected deployment will answer 401"
+          fi
+
+          code=""
+          for attempt in $(seq 1 "$ATTEMPTS"); do
+            echo "Attempt $attempt/$ATTEMPTS: GET $BASE_URL"
+            code=$(curl -sS -m 15 -o /dev/null -w '%{http_code}' \
+              "${bypass[@]}" \
+              -H 'User-Agent: github-actions-health-check' \
+              "$BASE_URL" || true)
+            case "$code" in 2??|3??) break ;; esac
+            echo "  -> HTTP ${code:-no response}"
+            if [ "$attempt" -lt "$ATTEMPTS" ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          case "$code" in
+            2??|3??)
+              echo "Deployment reachable: HTTP $code"
+              ;;
+            401|403)
+              echo "::error::$BASE_URL returned HTTP $code - the deployment is protected and VERCEL_AUTOMATION_BYPASS_SECRET is missing or stale"
+              exit 1
+              ;;
+            *)
+              echo "::error::$BASE_URL returned HTTP ${code:-no response} after $ATTEMPTS attempts"
+              exit 1
+              ;;
+          esac
+
+          echo "DEPLOYMENT_CODE=$code" >> "$GITHUB_ENV"
+
       - name: Probe API health
         run: |
           set -uo pipefail
@@ -84,8 +131,8 @@ jobs:
             echo "| Status | \`${status:-n/a}\` |"
             [ -n "$uptime" ] && echo "| Isolate warm | \`$((uptime / 1000))s\` |"
             [ -n "$region" ] && echo "| Region | \`$region\` |"
-            if [ "${{ github.event_name }}" = "deployment_status" ]; then
-              echo "| Deployment | ${{ github.event.deployment_status.environment_url || 'n/a' }} |"
+            if [ -n "$BASE_URL" ]; then
+              echo "| Deployment | $BASE_URL (HTTP \`${DEPLOYMENT_CODE:-n/a}\`) |"
               echo "| Environment | \`${{ github.event.deployment.environment || 'n/a' }}\` |"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
