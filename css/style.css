@@ -149,6 +149,14 @@ footer {
 	line-height:1.5;
 	text-align:center;
 }
+/* The [hidden] attribute and the .cookie-notice class carry equal CSS
+   specificity, and author styles beat the browser's built-in [hidden]
+   rule regardless of specificity - so display:flex above was winning even
+   while hidden was set. This rule wins on specificity instead, so the
+   dismiss button in js/cookie-notice.js actually hides the banner. */
+.cookie-notice[hidden] {
+	display:none;
+}
 .cookie-notice a {
 	color:#ffffff;
 	text-decoration:underline;
