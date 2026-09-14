@@ -141,7 +141,7 @@
           <p>Every page requests <code>/api/debug</code> once when it loads, to fill in the &ldquo;cluster&rdquo; label at the foot of the page. The <a href="/.debug/">debug page</a> additionally requests <code>/api/health</code>, <code>/api/time</code>, <code>/api/ip</code> and <code>/api/session</code>. No other page requests anything else.</p>
 
           <h3>What the API processes</h3>
-          <p>Answering any web request necessarily involves the following. The API receives it, uses it to compose a reply, and discards it.</p>
+          <p>Answering any web request necessarily involves the following. The API receives it and uses it to compose a reply; see Retention, below, for how long it is kept after that.</p>
           <ul role="list">
             <li>IP address, as seen by the infrastructure provider's network</li>
             <li>Approximate location derived from that address by the provider: country, region, city and city-level coordinates. It is not precise, and no location permission is requested from the browser</li>
@@ -151,10 +151,10 @@
           <p>The reply is sent to the User's own browser and is displayed there. On the debug page the User can see the whole of it.</p>
 
           <h3>Purpose and legal basis</h3>
-          <p>The purpose is operating and diagnosing this website: knowing which edge location answered a request is how the Owner tells a local fault from a general one. Under Article 6(1)(f) of the GDPR the legal basis is the Owner's legitimate interest in keeping the site working and diagnosable. The processing is limited to what a web request unavoidably carries, and nothing is combined with anything else, used to build a profile, or used to make decisions about anyone.</p>
+          <p>The purpose is operating and diagnosing this website: knowing which edge location answered a request is how the Owner tells a local fault from a general one, including a fault that is no longer happening by the time it is looked into. Under Article 6(1)(f) of the GDPR the legal basis is the Owner's legitimate interest in keeping the site working and diagnosable. The processing is limited to what a web request unavoidably carries, and nothing is combined with anything else, used to build a profile, or used to make decisions about anyone.</p>
 
           <h3>Retention</h3>
-          <p>The Owner keeps none of it. Each reply is composed fresh from the incoming request and marked <code>no-store</code>; there is no database, no log file and no analytics behind these endpoints. The infrastructure provider may retain operational request logs of its own as the Owner's processor, under its own terms, in the ordinary course of running the servers.</p>
+          <p>Each request is stored in a Vercel Blob for 60 days, then deleted automatically. The Owner keeps it for longer than that only if required to by a valid legal request, such as a court order or a lawful request from a government authority; no other reason extends it. The infrastructure provider may separately retain operational request logs of its own as the Owner's processor, under its own terms, in the ordinary course of running the servers.</p>
 
           <h3>Storage on the User's device</h3>
           <p>The result of the <code>/api/debug</code> call is kept in the browser's <code>sessionStorage</code>, under the key <code>ll-cluster</code>, for five minutes, so moving between pages does not repeat the request. It never leaves the device and is discarded when the tab is closed. Clearing site data removes it.</p>
@@ -171,7 +171,7 @@
           <p>These endpoints are readable. <a href="https://api.shadowdewuff.gay/api" target="_blank" rel="noopener">api.shadowdewuff.gay/api</a> lists them, and each returns exactly what this section describes and nothing more. What the API knows about a User is precisely what it returns to them.</p>
 
           <h3>Rights</h3>
-          <p>Users in the EU or EEA have the right to access, rectify, erase, restrict and object to processing of their personal data, and to data portability. Because nothing from these endpoints is retained by the Owner, there is generally nothing held to retrieve, correct or erase; a request for operational logs held by the infrastructure provider will be passed on. Requests and objections can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>. Users also have the right to lodge a complaint with their national data protection supervisory authority.</p>
+          <p>Users in the EU or EEA have the right to access, rectify, erase, restrict and object to processing of their personal data, and to data portability. These rights apply to a stored request for as long as its 60-day retention lasts; after that, or once a specific request has already been deleted, there is nothing left of it to act on, except operational logs the infrastructure provider may separately hold as processor, which will be passed on. Requests and objections can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>. Users also have the right to lodge a complaint with their national data protection supervisory authority.</p>
         </section>
 
         <footer>
