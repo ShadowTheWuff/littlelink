@@ -1,0 +1,2 @@
+# The canonical file is /llms.txt (the actual convention name).
+# See: https://me.shadowdewuff.gay/llms.txt

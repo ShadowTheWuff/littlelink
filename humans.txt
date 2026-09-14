@@ -1,0 +1,11 @@
+/* TEAM */
+Developer: Tanner "shadowdewuff" Knapp
+Contact: webmaster [at] shadowdewuff.gay
+Site: https://me.shadowdewuff.gay
+GitHub: https://github.com/ShadowTheWuff
+
+/* SITE */
+Built on: LittleLink (https://littlelink.io)
+Hosted on: Vercel
+Standards: HTML5, CSS3
+Components: Google Analytics, Fathom Analytics, Vercel Web Analytics

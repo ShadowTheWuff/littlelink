@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /.debug/
+
+Sitemap: https://me.shadowdewuff.gay/sitemap.xml

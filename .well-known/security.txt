@@ -1,0 +1,4 @@
+Contact: mailto:webmaster@shadowdewuff.gay
+Expires: 2027-09-14T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://me.shadowdewuff.gay/.well-known/security.txt

@@ -83,6 +83,17 @@
           <p>You can read our full privacy policy here: <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=ddb41861-0e4f-4848-8409-633b6c761a08" target="_blank" rel="noopener">Privacy Policy</a>.</p>
         </section>
 
+        <section aria-labelledby="cookies-heading">
+          <h2 id="cookies-heading">Cookies</h2>
+          <p>This is a notice about cookies and similar local storage this site uses, not a consent request: the services below are not blocked while you decide. If you would rather they did not run, the most reliable option is a browser extension that blocks them, or declining cookies in your browser settings.</p>
+          <ul role="list">
+            <li><strong>Google Analytics</strong> sets cookies named <code>_ga</code>, <code>_ga_*</code> and <code>_gid</code> to distinguish visitors and sessions. <code>_ga</code> and <code>_ga_*</code> persist up to two years; <code>_gid</code> for 24 hours. Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out browser add-on</a> stops this without needing to block cookies generally.</li>
+            <li><strong>Fathom Analytics</strong> is cookieless by design; it does not set any.</li>
+            <li><strong>Vercel Web Analytics</strong> is also cookieless.</li>
+            <li>This site keeps two things in your browser's own storage, not a cookie: <code>sessionStorage</code> holds the &ldquo;cluster&rdquo; footer label for five minutes (see Diagnostics API, below), and <code>localStorage</code> remembers, once you dismiss this notice, that you have seen it. Neither is sent anywhere; both stay on your device and can be cleared from your browser's site data settings.</li>
+          </ul>
+        </section>
+
         <section aria-labelledby="analytics-heading">
           <h2 id="analytics-heading">Analytics</h2>
           <p>The services contained in this section enable the Owner to monitor and analyze web traffic and can be used to keep track of User behavior.</p>
@@ -164,11 +175,19 @@
         </section>
 
         <footer>
-          <p>Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
+          <p><a href="tos.html">Terms of Service</a> | <a href="impressum.html">Impressum</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
           <p class="cluster" data-cluster>cluster: &hellip;</p>
         </footer>
       </div>
     </main>
+
+    <!-- Cookie notice - see js/cookie-notice.js. Hidden by default; the script
+         un-hides it for a visitor who has not dismissed it yet. -->
+    <div class="cookie-notice" id="cookie-notice" hidden>
+      <p>This site uses cookies for analytics. See the Cookies section above for details.</p>
+      <button type="button" class="cookie-notice-dismiss" id="cookie-notice-dismiss">Got it</button>
+    </div>
+    <script src="js/cookie-notice.js" defer></script>
 
     <!-- Fills the cluster label in the footer from the /api/debug endpoint
          hosted on the nitro-starter deployment; js/api.js holds its base URL. -->

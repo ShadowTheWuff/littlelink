@@ -1,0 +1,16 @@
+# Shadowthewuff
+
+> Personal link-in-bio page for Tanner "shadowdewuff" Knapp, built on a fork of LittleLink.
+
+Links out to profiles on VRChat, Steam, Last.fm, AniList, Tracker Network, Medal.tv, TikTok and Toyhouse. No account system, no content beyond the link list and the legal pages below.
+
+## Pages
+
+- [Home](https://me.shadowdewuff.gay/): the link list
+- [Privacy Policy](https://me.shadowdewuff.gay/privacy): data collection, cookies, and the diagnostics API
+- [Terms of Service](https://me.shadowdewuff.gay/tos): terms of use
+- [Impressum](https://me.shadowdewuff.gay/impressum): legal notice
+
+## Notes
+
+This site's preference on AI training use of its content is stated in /ai.txt: indexing and citation are fine, bulk scraping for model training is not.

@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" href="images/avatar.png"> <!-- Update this with your own favicon -->
 
     <!-- Meta Description - Write a description (150-160 characters recommended) -->
-    <meta name="description" content="Meow">
+    <meta name="description" content="Shadowthewuff's link hub: VRChat, Steam, Last.fm, AniList, Tracker Network, Medal.tv, TikTok and Toyhouse, all in one place.">
 
     <!-- Canonical URL - Helps prevent duplicate content issues -->
     <link rel="canonical" href="https://me.shadowdewuff.gay">
@@ -146,12 +146,20 @@
 
       <!-- Feel free to add your own footer information, including updating `privacy.html` to reflect how your LittleLink fork is set up -->
       <footer>
-        <a href="privacy.html">Privacy Policy</a> | <a href=".debug/">Debug</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink</a>
+        <a href="privacy.html">Privacy Policy</a> | <a href="tos.html">Terms of Service</a> | <a href="impressum.html">Impressum</a> | <a href=".debug/">Debug</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink</a>
         <p class="cluster" data-cluster>cluster: &hellip;</p>
       </footer>
 
     </div>
   </div>
+
+  <!-- Cookie notice - see js/cookie-notice.js. Hidden by default; the script
+       un-hides it for a visitor who has not dismissed it yet. -->
+  <div class="cookie-notice" id="cookie-notice" hidden>
+    <p>This site uses cookies for analytics. See the <a href="privacy.html">Privacy Policy</a> for details.</p>
+    <button type="button" class="cookie-notice-dismiss" id="cookie-notice-dismiss">Got it</button>
+  </div>
+  <script src="js/cookie-notice.js" defer></script>
 
   <!-- Fills the cluster label in the footer from the /api/debug endpoint
        hosted on the nitro-starter deployment; js/api.js holds its base URL. -->
