@@ -18,7 +18,7 @@ const BLOCKED_COUNTRIES = new Set([
   'IR', // Iran
   'KP', // North Korea
   'SY', // Syria
-//  'US'  // United States ( TEST)
+  'US', // United States (TEST - blocks the whole country; preview branch only)
 ]);
 
 // Embargoed regions of Ukraine, as ISO 3166-2 subdivision codes without the
