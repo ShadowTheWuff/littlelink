@@ -1,10 +1,11 @@
 /* TEAM */
 Developer: Tanner "shadowdewuff" Knapp
-Contact: t.knapp [at] shadowdewuff.gay
+Contact: webmaster [at] shadowdewuff.gay
 Site: https://me.shadowdewuff.gay
 GitHub: https://github.com/ShadowTheWuff
 
 /* SITE */
+Last update: 2026/09/19
 Built on: LittleLink (https://littlelink.io)
 Hosted on: Vercel
 Standards: HTML5, CSS3
