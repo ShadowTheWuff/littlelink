@@ -1,6 +1,6 @@
 /* TEAM */
 Developer: Tanner "shadowdewuff" Knapp
-Contact: webmaster [at] shadowdewuff.gay
+Contact: t.knapp [at] shadowdewuff.gay
 Site: https://me.shadowdewuff.gay
 GitHub: https://github.com/ShadowTheWuff
 
