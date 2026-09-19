@@ -8,4 +8,4 @@ GitHub: https://github.com/ShadowTheWuff
 Built on: LittleLink (https://littlelink.io)
 Hosted on: Vercel
 Standards: HTML5, CSS3
-Components: Google Analytics, Fathom Analytics, Vercel Web Analytics
+Components: Google Analytics, Vercel Web Analytics
