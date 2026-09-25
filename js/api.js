@@ -16,7 +16,14 @@
 // Authentication setting, and a request to a sibling subdomain of this site is
 // far less likely to be caught by a content blocker than one to vercel.app.
 (function () {
-  var BASE = 'https://api.shadowdewuff.gay';
+  // Test hook: appending ?apidown to any page's URL points every request in
+  // this file at a domain reserved by RFC 2606 to never resolve (.invalid),
+  // so the API looks down without touching the real deployment. Useful for
+  // checking the .debug page's and cluster.js's failure UI on demand -
+  // visit /.debug?apidown to see it. Never gets this from anywhere but the
+  // page's own URL, so it can't be triggered remotely.
+  var TEST_DOWN = /(?:^|[?&])apidown(?:&|=|$)/.test(window.location.search);
+  var BASE = TEST_DOWN ? 'https://api-down-test.invalid' : 'https://api.shadowdewuff.gay';
   var WEBMASTER = 'webmaster@shadowdewuff.gay';
   var TIMEOUT_MS = 8000;
 
@@ -39,6 +46,7 @@
   window.LittleLinkApi = {
     base: BASE,
     webmaster: WEBMASTER,
+    testDown: TEST_DOWN,
 
     url: function (path) {
       return BASE + path;

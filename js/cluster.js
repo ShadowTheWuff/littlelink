@@ -53,17 +53,23 @@
     } catch (e) { /* storage unavailable; nothing to do */ }
   }
 
-  try {
-    var cached = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
-    if (cached && Date.now() - cached.t < TTL_MS) {
-      apply(cached.text, cached.title);
-      return;
-    }
-  } catch (e) { /* no usable cache; fall through to fetch */ }
-
   if (!window.LittleLinkApi) {
     applyError('js/api.js did not load');
     return;
+  }
+
+  // ?apidown (see js/api.js) is asking to see the failure state, so a cached
+  // success from earlier this session shouldn't paper over it - and the
+  // resulting failure shouldn't get cached either, or the test would keep
+  // showing "down" after the flag is removed.
+  if (!window.LittleLinkApi.testDown) {
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+      if (cached && Date.now() - cached.t < TTL_MS) {
+        apply(cached.text, cached.title);
+        return;
+      }
+    } catch (e) { /* no usable cache; fall through to fetch */ }
   }
 
   window.LittleLinkApi.json('/api/debug')
