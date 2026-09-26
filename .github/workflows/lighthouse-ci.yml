@@ -1,0 +1,54 @@
+name: Lighthouse CI
+
+# Audits the real Vercel deployment (production or a PR preview) once it's
+# live, the same trigger deployment-health-check.yml uses. This site has no
+# build step, so there's nothing to serve locally - lighthouserc.js points
+# Lighthouse at the deployment URL Vercel just reported.
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL to audit
+        required: false
+        default: https://me.shadowdewuff.gay
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.event.deployment_status.environment_url || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    # deployment_status fires on every state transition (pending, error,
+    # success); only a finished deployment is worth auditing.
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    env:
+      LHCI_BASE_URL: ${{ github.event.deployment_status.environment_url || inputs.url }}
+      # Lets lighthouserc.js get past deployment protection on PR previews.
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@latest
+          lhci autorun --config=lighthouserc.js
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Lighthouse CI"
+            echo
+            echo "Audited \`$LHCI_BASE_URL\` (/, /privacy, /tos). Report links are above in the"
+            echo "\"Run Lighthouse CI\" step output (temporary-public-storage links, valid 7 days)."
+          } >> "$GITHUB_STEP_SUMMARY"
