@@ -110,6 +110,18 @@
         justify-content:center;
       }
 
+      /* Clerk's UI renders into the light DOM with a stable semantic class
+         per element descriptor (cl-<descriptor>, alongside its hashed
+         cl-internal-* ones), so the page can style it directly. This drops
+         the show/hide-password eye from the password field. display:none
+         also takes it out of the tab order, so it does not linger as an
+         invisible focus stop. !important because Clerk's own styles are
+         injected at runtime and win on specificity otherwise. */
+      .cl-formFieldInputShowPasswordButton,
+      .cl-formFieldInputShowPasswordIcon {
+        display:none !important;
+      }
+
       .admin-bar {
         display:flex;
         align-items:center;

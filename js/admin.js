@@ -16,6 +16,12 @@
   // will be refused here.
   var REQUIRED_PERMISSION = 'log_acces:log_enabled';
 
+  // Clerk.addListener fires on every client/session resource change - it
+  // fires even while the page sits idle - so nothing below may assume it
+  // runs once. These two latches keep the listener from redoing work.
+  var signInMounted = false;
+  var diagnosticsLoaded = false;
+
   var errorBox = document.getElementById('admin-error');
   var signInBox = document.getElementById('clerk-sign-in');
   var content = document.getElementById('admin-content');
@@ -86,8 +92,14 @@
   }
 
   function showSignedIn(user) {
+    // Let Clerk tear its own widget down. Clearing innerHTML instead would
+    // strip the DOM out from under a component that still thinks it is
+    // mounted.
+    if (signInMounted && window.Clerk) {
+      window.Clerk.unmountSignIn(signInBox);
+      signInMounted = false;
+    }
     signInBox.hidden = true;
-    signInBox.innerHTML = '';
 
     if (!hasPermission()) {
       showDenied(user);
@@ -98,7 +110,10 @@
     content.hidden = false;
     userLabel.textContent = 'Signed in as ' + describe(user);
 
-    loadDiagnostics();
+    if (!diagnosticsLoaded) {
+      diagnosticsLoaded = true;
+      loadDiagnostics();
+    }
   }
 
   // Signed in, but without the permission: say so plainly and leave the
@@ -123,7 +138,17 @@
     var section = content.querySelector('section');
     if (section) { section.hidden = false; }
     signInBox.hidden = false;
-    if (window.Clerk) { window.Clerk.mountSignIn(signInBox); }
+
+    // Mount once and leave it alone. Every step of the sign-in flow -
+    // creating the attempt, sending the email code, verifying it - changes
+    // a Clerk resource and so re-fires the listener above. Remounting on
+    // those events tears the widget down mid-flow and it asks for a fresh
+    // code on the way back up, which is what trips Clerk's rate limit with
+    // "Too many requests. Please try again in a bit."
+    if (!signInMounted && window.Clerk) {
+      window.Clerk.mountSignIn(signInBox);
+      signInMounted = true;
+    }
   }
 
   function boot() {
