@@ -16,11 +16,19 @@
   // will be refused here.
   var REQUIRED_PERMISSION = 'log_acces:log_enabled';
 
+  // The organization that carries REQUIRED_PERMISSION. Clerk scopes custom
+  // permissions to an organization and checks them against whichever one is
+  // *active* on the session, and a fresh sign-in leaves that null - so the
+  // permission check fails on a correct account until this is selected.
+  // Slug: tannerknapp-1790634481795651123
+  var ORGANIZATION_ID = 'org_3JyXrbmV91342ZuMZgDEheZF0zl';
+
   // Clerk.addListener fires on every client/session resource change - it
   // fires even while the page sits idle - so nothing below may assume it
   // runs once. These two latches keep the listener from redoing work.
   var signInMounted = false;
   var diagnosticsLoaded = false;
+  var orgActivationTried = false;
 
   var errorBox = document.getElementById('admin-error');
   var signInBox = document.getElementById('clerk-sign-in');
@@ -77,6 +85,13 @@
       });
   }
 
+  // The deployment table is hidden whenever the page is showing something
+  // other than the dashboard itself (activating, or refused).
+  function setSection(visible) {
+    var section = content.querySelector('section');
+    if (section) { section.hidden = !visible; }
+  }
+
   function describe(user) {
     var email = user.primaryEmailAddress && user.primaryEmailAddress.emailAddress;
     return email || user.id;
@@ -101,12 +116,34 @@
     }
     signInBox.hidden = true;
 
+    // Select the organization before judging the permission, once. setActive
+    // changes a resource and so re-fires the listener, which lands back
+    // here - the latch is what stops that becoming a loop, and it also
+    // means a genuine failure (not a member, org deleted) is reported
+    // instead of being retried forever.
+    var active = window.Clerk.organization && window.Clerk.organization.id;
+    if (active !== ORGANIZATION_ID && !orgActivationTried) {
+      orgActivationTried = true;
+      setSection(false);
+      content.hidden = false;
+      userLabel.textContent = 'Signed in as ' + describe(user);
+      window.Clerk.setActive({ organization: ORGANIZATION_ID })
+        .then(function () { showSignedIn(user); })
+        .catch(function (err) {
+          showDenied(user, 'Could not select the organization that grants ' +
+            REQUIRED_PERMISSION + ' (' + err.message + '). Check that this ' +
+            'account is a member of it.');
+        });
+      return;
+    }
+
     if (!hasPermission()) {
       showDenied(user);
       return;
     }
 
     if (errorBox) { errorBox.hidden = true; }
+    setSection(true);
     content.hidden = false;
     userLabel.textContent = 'Signed in as ' + describe(user);
 
@@ -118,25 +155,25 @@
 
   // Signed in, but without the permission: say so plainly and leave the
   // sign-out button reachable so the wrong account isn't a dead end.
-  function showDenied(user) {
+  function showDenied(user, message) {
     content.hidden = false;
     userLabel.textContent = 'Signed in as ' + describe(user);
 
-    var section = content.querySelector('section');
-    if (section) { section.hidden = true; }
+    setSection(false);
 
-    showError(
+    showError(message ||
       'This account does not have the ' + REQUIRED_PERMISSION + ' permission, ' +
-      'so the dashboard is hidden. Grant it to your role in Clerk (Configure > ' +
-      'Roles) and make sure the organization it belongs to is the active one.'
+      'so the dashboard is hidden. Grant it to the role this account holds in ' +
+      'the organization above (Clerk > Configure > Roles).'
     );
   }
 
   function showSignedOut() {
+    // A different account may sign in next, so let activation run again.
+    orgActivationTried = false;
     content.hidden = true;
     if (errorBox) { errorBox.hidden = true; }
-    var section = content.querySelector('section');
-    if (section) { section.hidden = false; }
+    setSection(true);
     signInBox.hidden = false;
 
     // Mount once and leave it alone. Every step of the sign-in flow -
