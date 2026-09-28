@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<!--
+  Admin dashboard, gated behind Clerk (https://clerk.com). Shows the same
+  deployment info the public /.debug page already shows - see the note
+  below the heading for why that's the honest way to describe this.
+
+  === CLERK SETUP - replace before this works ===
+  1. Create a free Clerk application at https://dashboard.clerk.com.
+  2. Copy its Publishable key (API Keys in the sidebar) - it's meant to be
+     public, safe to commit, same idea as the Google Analytics ID below.
+  3. Below, replace PLACEHOLDER_PUBLISHABLE_KEY and PLACEHOLDER_FRONTEND_API
+     with your real values. The frontend API host is the domain your
+     Clerk dashboard shows under Domains (something like
+     "witty-parakeet-12.clerk.accounts.dev" on the free plan).
+  4. Under User & Authentication > Restrictions, turn off public sign-up
+     (or just create yourself as the one user) so nobody else can join.
+
+  To change the theme, change the class on the html tag below to one of:
+  - theme-auto: Automatically switches based on user's system preferences
+  - theme-light: Forces light theme
+  - theme-dark: Forces dark theme
+-->
+
+<html class="theme-auto" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Admin | LittleLink</title>
+    <link rel="icon" type="image/png" href="../images/avatar.png">
+
+    <meta name="description" content="Admin dashboard">
+    <meta name="robots" content="noindex, nofollow"> <!-- Utility page, keep it out of search results -->
+
+    <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <!-- Unqualified fallback for link unfurlers that ignore `media` -->
+    <meta name="theme-color" content="#121212">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH1F0X7SZW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WH1F0X7SZW');
+    </script>
+    <!-- / Google tag -->
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+      /* Page-local styling, mirroring .debug/index.html's table/note/error
+         patterns under an "admin-" prefix so this page stays self-contained. */
+      :root {
+        --admin-muted:#5a5a5a;
+        --admin-rule:#e4e4e4;
+        --admin-surface:#f7f7f7;
+        --admin-alert-surface:#fdf2f2;
+        --admin-alert-rule:#e5c1c1;
+      }
+      :root.theme-dark {
+        --admin-muted:#a0a0a0;
+        --admin-rule:#2e2e2e;
+        --admin-surface:#1c1c1c;
+        --admin-alert-surface:#2a1d1d;
+        --admin-alert-rule:#5a3838;
+      }
+      @media (prefers-color-scheme:dark) {
+        :root.theme-auto {
+          --admin-muted:#a0a0a0;
+          --admin-rule:#2e2e2e;
+          --admin-surface:#1c1c1c;
+          --admin-alert-surface:#2a1d1d;
+          --admin-alert-rule:#5a3838;
+        }
+      }
+
+      .admin-note {
+        padding:0.75rem 1rem;
+        background-color:var(--admin-surface);
+        border-radius:0.5rem;
+        color:var(--admin-muted);
+        font-size:0.875rem;
+        line-height:1.6;
+      }
+
+      .admin-error {
+        margin:var(--spacing-m) 0;
+        padding:0.75rem 1rem;
+        background-color:var(--admin-alert-surface);
+        border:1px solid var(--admin-alert-rule);
+        border-radius:0.5rem;
+        font-size:0.875rem;
+        line-height:1.6;
+      }
+
+      #clerk-sign-in {
+        margin:var(--spacing-l) 0;
+        display:flex;
+        justify-content:center;
+      }
+
+      .admin-bar {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:1rem;
+        margin:var(--spacing-m) 0;
+        padding:0.75rem 1rem;
+        background-color:var(--admin-surface);
+        border-radius:0.5rem;
+        font-size:0.875rem;
+      }
+      .admin-bar button {
+        font:inherit;
+        font-weight:600;
+        color:inherit;
+        padding:0.35rem 0.75rem;
+        background-color:transparent;
+        border:1px solid var(--admin-rule);
+        border-radius:0.375rem;
+        cursor:pointer;
+      }
+      .admin-bar button:hover { border-color:var(--admin-muted); }
+
+      .admin-table {
+        width:100%;
+        border-collapse:collapse;
+        font-size:0.875rem;
+        text-align:left;
+      }
+      .admin-table th,
+      .admin-table td {
+        padding:0.5rem 0.75rem;
+        border-bottom:1px solid var(--admin-rule);
+        vertical-align:top;
+      }
+      .admin-table th {
+        width:11rem;
+        font-weight:700;
+        white-space:nowrap;
+      }
+      .admin-table td {
+        font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+        word-break:break-word;
+      }
+    </style>
+
+    <!--
+      Clerk's vanilla-JS SDK. This is a real dependency - the page does
+      nothing without it. Replace both placeholders per the CLERK SETUP
+      note at the top of this file.
+    -->
+    <script
+      async
+      crossorigin="anonymous"
+      data-clerk-publishable-key="PLACEHOLDER_PUBLISHABLE_KEY"
+      src="https://PLACEHOLDER_FRONTEND_API/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      type="text/javascript"
+    ></script>
+
+  </head>
+
+  <body>
+    <main class="container-left">
+      <div class="column">
+        <nav>
+          <a href="../index.html" aria-label="Back to homepage">&larr; Back to main page</a>
+        </nav>
+
+        <h1>Admin</h1>
+
+        <p class="admin-note">Signing in here only changes what <em>this page</em> shows you - the deployment info below comes from the same public, unauthenticated <code>/api/debug</code> endpoint the <a href="../.debug/">/.debug page</a> already calls without any login. Clerk gates the dashboard view, not the underlying data; locking the data itself down would mean the API verifying a Clerk session server-side, which lives in a separate deployment this page doesn't control.</p>
+
+        <p class="admin-error" id="admin-error" role="alert" hidden></p>
+
+        <div id="clerk-sign-in"></div>
+
+        <div id="admin-content" hidden>
+          <div class="admin-bar">
+            <span id="admin-user">Signed in</span>
+            <button type="button" id="admin-sign-out">Sign out</button>
+          </div>
+
+          <section aria-labelledby="admin-deployment-heading">
+            <h2 id="admin-deployment-heading">Deployment</h2>
+            <table class="admin-table">
+              <tbody>
+                <tr><th scope="row">Status</th><td id="adm-status">loading&hellip;</td></tr>
+                <tr><th scope="row">Host</th><td id="adm-host">n/a</td></tr>
+                <tr><th scope="row">Environment</th><td id="adm-env">n/a</td></tr>
+                <tr><th scope="row">Region</th><td id="adm-region">n/a</td></tr>
+                <tr><th scope="row">Deployment ID</th><td id="adm-id">n/a</td></tr>
+                <tr><th scope="row">Branch</th><td id="adm-branch">n/a</td></tr>
+                <tr><th scope="row">Commit</th><td id="adm-commit">n/a</td></tr>
+                <tr><th scope="row">Commit message</th><td id="adm-message">n/a</td></tr>
+                <tr><th scope="row">Author</th><td id="adm-author">n/a</td></tr>
+                <tr><th scope="row">Runtime</th><td id="adm-node">n/a</td></tr>
+                <tr><th scope="row">Instance started</th><td id="adm-started">n/a</td></tr>
+                <tr><th scope="row">Server time</th><td id="adm-time">n/a</td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+
+        <footer>
+          <p><a href="../privacy.html">Privacy Policy</a> | <a href="../tos.html">Terms of Service</a></p>
+          <p class="copyright">&copy; <span id="copyright-year">2026</span> ShadowTheWuff</p>
+        </footer>
+      </div>
+    </main>
+
+    <script src="../js/copyright.js" defer></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/admin.js" defer></script>
+
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
+  </body>
+
+</html>
