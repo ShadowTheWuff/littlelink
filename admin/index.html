@@ -5,11 +5,13 @@
   deployment info the public /.debug page already shows - see the note
   below the heading for why that's the honest way to describe this.
 
-  Wired up to the loved-mantis-5181 Clerk application (its Publishable key
-  below is meant to be public, safe to commit - same idea as the Google
-  Analytics ID). If you ever rotate it or move to a different Clerk app,
-  swap both the data-clerk-publishable-key attribute and the script's src
-  host together; they have to name the same instance. Under Clerk's User &
+  Wired up to Clerk's production instance, served from its custom domain
+  clerk.me.shadowdewuff.gay (previously the loved-mantis-5181 dev instance
+  at *.clerk.accounts.dev). The Publishable key below is meant to be
+  public, safe to commit - same idea as the Google Analytics ID. If you
+  ever rotate it or move to a different Clerk instance, swap the
+  data-clerk-publishable-key attribute and both scripts' src host
+  together; they all have to name the same instance. Under Clerk's User &
   Authentication > Restrictions, turn off public sign-up (or just create
   yourself as the one user) so nobody else can join.
 
@@ -150,15 +152,21 @@
     </style>
 
     <!--
-      Clerk's vanilla-JS SDK. This is a real dependency - the page does
-      nothing without it. Replace both placeholders per the CLERK SETUP
-      note at the top of this file.
+      Clerk's UI + vanilla-JS SDK, production instance. Both scripts have
+      to point at the same instance's custom domain as the publishable key
+      below (see the note at the top of this file).
     -->
     <script
-      async
+      defer
       crossorigin="anonymous"
-      data-clerk-publishable-key="pk_test_bG92ZWQtbWFudGlzLTUxODEuY2xlcmsuYWNjb3VudHMuZGV2JA"
-      src="https://loved-mantis-5181.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      src="https://clerk.me.shadowdewuff.gay/npm/@clerk/ui@1/dist/ui.browser.js"
+      type="text/javascript"
+    ></script>
+    <script
+      defer
+      crossorigin="anonymous"
+      data-clerk-publishable-key="pk_live_Y2xlcmsubWUuc2hhZG93ZGV3dWZmLmdheSQ"
+      src="https://clerk.me.shadowdewuff.gay/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
       type="text/javascript"
     ></script>
 
