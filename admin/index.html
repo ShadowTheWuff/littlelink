@@ -5,16 +5,13 @@
   deployment info the public /.debug page already shows - see the note
   below the heading for why that's the honest way to describe this.
 
-  === CLERK SETUP - replace before this works ===
-  1. Create a free Clerk application at https://dashboard.clerk.com.
-  2. Copy its Publishable key (API Keys in the sidebar) - it's meant to be
-     public, safe to commit, same idea as the Google Analytics ID below.
-  3. Below, replace PLACEHOLDER_PUBLISHABLE_KEY and PLACEHOLDER_FRONTEND_API
-     with your real values. The frontend API host is the domain your
-     Clerk dashboard shows under Domains (something like
-     "witty-parakeet-12.clerk.accounts.dev" on the free plan).
-  4. Under User & Authentication > Restrictions, turn off public sign-up
-     (or just create yourself as the one user) so nobody else can join.
+  Wired up to the loved-mantis-5181 Clerk application (its Publishable key
+  below is meant to be public, safe to commit - same idea as the Google
+  Analytics ID). If you ever rotate it or move to a different Clerk app,
+  swap both the data-clerk-publishable-key attribute and the script's src
+  host together; they have to name the same instance. Under Clerk's User &
+  Authentication > Restrictions, turn off public sign-up (or just create
+  yourself as the one user) so nobody else can join.
 
   To change the theme, change the class on the html tag below to one of:
   - theme-auto: Automatically switches based on user's system preferences
@@ -160,8 +157,8 @@
     <script
       async
       crossorigin="anonymous"
-      data-clerk-publishable-key="PLACEHOLDER_PUBLISHABLE_KEY"
-      src="https://PLACEHOLDER_FRONTEND_API/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      data-clerk-publishable-key="pk_test_bG92ZWQtbWFudGlzLTUxODEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+      src="https://loved-mantis-5181.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
       type="text/javascript"
     ></script>
 
