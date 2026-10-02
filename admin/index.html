@@ -3,6 +3,10 @@
 <!--
   Admin dashboard, gated behind Clerk (https://clerk.com) and the
   log_acces:log_enabled permission (Configure > Features > log_acces).
+  The Clerk wiring - SDK load, sign-in widget, organization and
+  permission check - lives in auth/clerk.js; js/admin.js only renders
+  this page. The two script tags below stay here because the
+  publishable key names the instance this page signs in to.
   Shows the same deployment info the public /.debug page already shows -
   see the note below the heading for why that's the honest way to
   describe this. Custom permissions in Clerk are organization-scoped:
@@ -108,6 +112,18 @@
         margin:var(--spacing-l) 0;
         display:flex;
         justify-content:center;
+      }
+
+      /* Clerk's UI renders into the light DOM with a stable semantic class
+         per element descriptor (cl-<descriptor>, alongside its hashed
+         cl-internal-* ones), so the page can style it directly. This drops
+         the show/hide-password eye from the password field. display:none
+         also takes it out of the tab order, so it does not linger as an
+         invisible focus stop. !important because Clerk's own styles are
+         injected at runtime and win on specificity otherwise. */
+      .cl-formFieldInputShowPasswordButton,
+      .cl-formFieldInputShowPasswordIcon {
+        display:none !important;
       }
 
       .admin-bar {
@@ -228,6 +244,9 @@
 
     <script src="../js/copyright.js" defer></script>
     <script src="../js/api.js"></script>
+    <!-- auth/clerk.js must define LittleLinkAuth before admin.js calls it;
+         both are deferred, so they run in this order. -->
+    <script src="../auth/clerk.js" defer></script>
     <script src="../js/admin.js" defer></script>
 
     <!-- Vercel Web Analytics -->
