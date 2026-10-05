@@ -173,14 +173,48 @@
       });
   }
 
+  // Test mode: ?as=tanner renders the page as if Tanner Knapp were signed in,
+  // without touching Clerk - no session is created and nothing is
+  // authenticated, it only lets the signed-in UI be checked. Honoured on
+  // localhost and Vercel preview deployments (*.vercel.app, which sit behind
+  // Vercel Authentication) only; on the production domain the parameter is
+  // ignored and the normal sign-in applies, so the live page stays gated.
+  var TEST_USER = {
+    id: 'test-tanner-knapp',
+    primaryEmailAddress: { emailAddress: 'shadow@shadowdewuff.gay' }
+  };
+
+  function testModeRequested() {
+    try {
+      if (new URLSearchParams(window.location.search).get('as') !== 'tanner') return false;
+    } catch (e) { return false; }
+    var host = window.location.hostname;
+    var allowed = host === 'localhost' || host === '127.0.0.1' || /\.vercel\.app$/.test(host);
+    if (!allowed && window.console) {
+      console.info('?as=tanner is ignored on ' + host + '; test mode only runs on localhost and *.vercel.app previews.');
+    }
+    return allowed;
+  }
+
+  var testMode = testModeRequested();
+
   window.LittleLinkAuth = {
     permission: REQUIRED_PERMISSION,
     organizationId: ORGANIZATION_ID,
+
+    // True when ?as=tanner is active - pages should say so on screen, since
+    // what they show is not a real session.
+    testMode: testMode,
 
     // How to name whoever is signed in, for a page that wants to show it.
     describe: describe,
 
     signOut: function () {
+      if (testMode) {
+        // There is no Clerk session to end; drop the parameter instead.
+        window.location.href = window.location.pathname;
+        return;
+      }
       if (window.Clerk) { window.Clerk.signOut(); }
     },
 
@@ -198,6 +232,12 @@
       options = options || {};
       mountTo = options.mountTo || null;
       handlers = options;
+
+      if (testMode) {
+        if (mountTo) { mountTo.hidden = true; }
+        emit('onSignedIn', TEST_USER);
+        return;
+      }
 
       // The Clerk script tags load async, so window.Clerk is not guaranteed
       // to exist yet when this file (deferred) runs. Waiting for the window
