@@ -400,6 +400,12 @@
 	--button-border:1px solid black;
 }
 
+/* Roblox */
+.button-roblox {
+	--button-text:#ffffff;
+	--button-background:#335FFF;
+}
+
 /* Roll20 */
 .button-roll20 {
   --button-text:#FFFFFF;
