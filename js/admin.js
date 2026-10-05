@@ -12,6 +12,11 @@
 
   var diagnosticsLoaded = false;
 
+  // Set when a ?__clerk_ticket= link was rejected. onSignedOut re-fires on
+  // every Clerk resource change and clears the error box, so the message is
+  // kept here and put back each time rather than flashing and vanishing.
+  var ticketError = null;
+
   var errorBox = document.getElementById('admin-error');
   var signInBox = document.getElementById('clerk-sign-in');
   var content = document.getElementById('admin-content');
@@ -96,9 +101,15 @@
 
     onError: showError,
 
+    onTicketFailed: function (message) {
+      ticketError = message;
+      showError(message);
+    },
+
     onSignedOut: function () {
       content.hidden = true;
       clearError();
+      if (ticketError) { showError(ticketError); }
       setSection(true);
     },
 
