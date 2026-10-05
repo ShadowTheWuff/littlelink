@@ -403,7 +403,8 @@
 /* Roblox */
 .button-roblox {
 	--button-text:#ffffff;
-	--button-background:#335FFF;
+	--button-background:#000000;
+	--button-border:1px solid #FFFFFF;
 }
 
 /* Roll20 */
