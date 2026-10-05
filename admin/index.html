@@ -42,6 +42,23 @@
     <meta name="description" content="Admin dashboard">
     <meta name="robots" content="noindex, nofollow"> <!-- Utility page, keep it out of search results -->
 
+    <!-- A one-time Clerk sign-in ticket (?__clerk_ticket=...) is taken out of
+         the address bar here, before Google Analytics or anything else reads
+         the URL, and kept in memory for auth/clerk.js to redeem. Keep this
+         above the Google tag. -->
+    <script>
+      (function () {
+        try {
+          var url = new URL(window.location.href);
+          var ticket = url.searchParams.get('__clerk_ticket');
+          if (!ticket) return;
+          window.__llSignInTicket = ticket;
+          url.searchParams.delete('__clerk_ticket');
+          history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+        } catch (e) { /* very old browser; the normal sign-in still works */ }
+      })();
+    </script>
+
     <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">

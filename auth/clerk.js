@@ -115,6 +115,32 @@
     emit('onSignedOut');
   }
 
+  // A one-time sign-in ticket from Clerk (a sign-in token minted for one
+  // user), taken out of the URL by the inline script at the top of
+  // admin/index.html. Resolves either way: a bad ticket is reported through
+  // onTicketFailed and the page falls back to the normal sign-in widget.
+  function redeemTicket(Clerk) {
+    var ticket = window.__llSignInTicket;
+    delete window.__llSignInTicket;
+    if (!ticket) return Promise.resolve();
+
+    // Already signed in: there is nothing to redeem it for, and creating a
+    // second sign-in alongside an existing session would fail anyway.
+    if (Clerk.user) return Promise.resolve();
+
+    return Clerk.client.signIn.create({ strategy: 'ticket', ticket: ticket })
+      .then(function (attempt) {
+        if (attempt.status !== 'complete' || !attempt.createdSessionId) {
+          throw new Error('Clerk needs another step to finish this sign-in (status: ' + attempt.status + ')');
+        }
+        return Clerk.setActive({ session: attempt.createdSessionId });
+      })
+      .catch(function (err) {
+        var detail = (err && err.errors && err.errors[0] && err.errors[0].longMessage) || (err && err.message) || 'unknown error';
+        emit('onTicketFailed', 'That sign-in link did not work (' + detail + '). Links work once and expire quickly, so ask for a new one, or sign in below.');
+      });
+  }
+
   function boot() {
     var Clerk = window.Clerk;
     if (!Clerk) {
@@ -135,6 +161,7 @@
     }
 
     Clerk.load({ ui: { ClerkUI: ClerkUI } })
+      .then(function () { return redeemTicket(Clerk); })
       .then(function () {
         Clerk.addListener(function (resource) {
           if (resource.user) { handleSignedIn(resource.user); } else { handleSignedOut(); }
@@ -165,6 +192,8 @@
     // options.onDenied(user, msg)  - signed in and refused; msg may be null,
     //                                meaning "lacks the permission".
     // options.onError(message)     - Clerk itself could not be set up.
+    // options.onTicketFailed(msg)  - a ?__clerk_ticket= link was rejected;
+    //                                the normal sign-in follows.
     start: function (options) {
       options = options || {};
       mountTo = options.mountTo || null;
