@@ -50,7 +50,8 @@
   }
 
   function nameUser(user) {
-    userLabel.textContent = 'Signed in as ' + auth.describe(user);
+    userLabel.textContent = 'Signed in as ' + auth.describe(user) +
+      (auth.testMode ? ' (TEST MODE via ?as=tanner - not a real Clerk session)' : '');
   }
 
   function loadDiagnostics() {
