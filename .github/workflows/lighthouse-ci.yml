@@ -32,7 +32,7 @@ jobs:
     # deployment_status fires on every state transition (pending, error,
     # success); only a finished deployment is worth auditing.
     if: github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success'
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-main
     env:
       LHCI_BASE_URL: ${{ inputs.url || github.event.deployment_status.environment_url }}
       # Lets lighthouserc.js get past deployment protection on PR previews.

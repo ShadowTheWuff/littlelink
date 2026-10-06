@@ -30,7 +30,7 @@ jobs:
     # deployment_status fires on every state transition (pending, error,
     # success); only a finished deployment is worth probing.
     if: github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success'
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-main
     env:
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
       BASE_URL: ${{ inputs.base_url || github.event.deployment_status.environment_url }}
