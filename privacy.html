@@ -86,7 +86,7 @@
             <li><strong>Google Analytics</strong> sets cookies named <code>_ga</code>, <code>_ga_*</code> and <code>_gid</code> to distinguish visitors and sessions. <code>_ga</code> and <code>_ga_*</code> persist up to two years; <code>_gid</code> for 24 hours. Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out browser add-on</a> stops this without needing to block cookies generally.</li>
             <li><strong>Vercel Web Analytics</strong> is cookieless by design; it does not set any.</li>
             <li><strong>Clerk</strong>, the sign-in service for the admin page (<code>/admin</code>), sets cookies only on that page, where its sign-in form loads; no other page loads it. They keep a signed-in session working and are strictly necessary for that sign-in. They may be set when the admin page is opened, even without signing in. See Sign-in for the admin area, below.</li>
-            <li>This site keeps two things in your browser's own storage, not a cookie: <code>sessionStorage</code> holds the &ldquo;cluster&rdquo; footer label for five minutes (see Diagnostics API, below), and <code>localStorage</code> remembers, once you dismiss this notice, that you have seen it. Neither is sent anywhere; both stay on your device and can be cleared from your browser's site data settings.</li>
+            <li>This site keeps two things in your browser's own storage, not a cookie: <code>sessionStorage</code> holds the &ldquo;cluster&rdquo; footer label for five minutes (see Diagnostics, below), and <code>localStorage</code> remembers, once you dismiss this notice, that you have seen it. Neither is sent anywhere; both stay on your device and can be cleared from your browser's site data settings.</li>
           </ul>
         </section>
 
@@ -132,12 +132,12 @@
         </section>
 
         <section aria-labelledby="api-heading">
-          <h2 id="api-heading">Diagnostics API</h2>
-          <p>This website calls a small diagnostics API of the Owner's own, at <a href="https://api.shadowdewuff.gay" target="_blank" rel="noopener">api.shadowdewuff.gay</a>. It reports which Vercel location served a request, so the Owner can tell where and how the site is being delivered. It is a separate deployment from this website, run by the same Owner on the same infrastructure provider.</p>
-          <p>Every page requests <code>/api/debug</code> once when it loads, to fill in the &ldquo;cluster&rdquo; label at the foot of the page. The <a href="/.debug/">debug page</a> additionally requests <code>/api/health</code>, <code>/api/time</code>, <code>/api/ip</code> and <code>/api/session</code>. No other page requests anything else.</p>
+          <h2 id="api-heading">Diagnostics</h2>
+          <p>This website calls a small diagnostics service of the Owner's own. It reports which Vercel location served a request, so the Owner can tell where and how the site is being delivered. It is a separate deployment from this website, run by the same Owner on the same infrastructure provider.</p>
+          <p>Every page makes one request to it when it loads, to fill in the &ldquo;cluster&rdquo; label at the foot of the page. The <a href="/.debug/">debug page</a> makes a few more, to show its diagnostic details. No other page requests anything else.</p>
 
-          <h3>What the API processes</h3>
-          <p>Answering any web request necessarily involves the following. The API receives it, uses it to compose a reply, and stores it in a Vercel Blob for 60 days, after which it is deleted, unless the Owner receives a valid legal request to keep it for longer. See Retention, below.</p>
+          <h3>What the service processes</h3>
+          <p>Answering any web request necessarily involves the following. The service receives it, uses it to compose a reply, and stores it in a Vercel Blob for 60 days, after which it is deleted, unless the Owner receives a valid legal request to keep it for longer. See Retention, below.</p>
           <ul role="list">
             <li>IP address, as seen by the infrastructure provider's network</li>
             <li>Approximate location derived from that address by the provider: country, region, city and city-level coordinates. It is not precise, and no location permission is requested from the browser</li>
@@ -156,18 +156,15 @@
           <p>Each request is stored in a Vercel Blob for 60 days, then deleted automatically. The Owner keeps it for longer than that only if required to by a valid legal request, such as a court order or a lawful request from a government authority; no other reason extends it. The infrastructure provider may separately retain operational request logs of its own as the Owner's processor, under its own terms, in the ordinary course of running the servers.</p>
 
           <h3>Storage on the User's device</h3>
-          <p>The result of the <code>/api/debug</code> call is kept in the browser's <code>sessionStorage</code>, under the key <code>ll-cluster</code>, for five minutes, so moving between pages does not repeat the request. It never leaves the device and is discarded when the tab is closed. Clearing site data removes it.</p>
-          <p>The API sets no cookies for ordinary visitors. Cookies are set only when the Owner signs in to administer the site, through Sign in with Vercel; those are strictly necessary for that sign-in and are never set for anyone who does not use it.</p>
+          <p>The result of the cluster label's request is kept in the browser's <code>sessionStorage</code>, under the key <code>ll-cluster</code>, for five minutes, so moving between pages does not repeat the request. It never leaves the device and is discarded when the tab is closed. Clearing site data removes it.</p>
+          <p>The service sets no cookies for ordinary visitors. Cookies are set only when the Owner signs in to administer the site, through Sign in with Vercel; those are strictly necessary for that sign-in and are never set for anyone who does not use it.</p>
 
           <h3>Where it runs</h3>
-          <p>The API runs on Vercel's edge network and is answered from the location nearest the User, which for Users in the EU or EEA means an edge location in or near that region. Vercel Inc. is established in the United States and is the Owner's processor for this; transfers outside the EEA are covered by the Standard Contractual Clauses in Vercel's data processing agreement.</p>
+          <p>The service runs on Vercel's edge network and is answered from the location nearest the User, which for Users in the EU or EEA means an edge location in or near that region. Vercel Inc. is established in the United States and is the Owner's processor for this; transfers outside the EEA are covered by the Standard Contractual Clauses in Vercel's data processing agreement.</p>
           <ul role="list">
             <li><a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Vercel privacy policy</a></li>
             <li><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">Vercel data processing addendum</a></li>
           </ul>
-
-          <h3>Seeing it for yourself</h3>
-          <p>These endpoints are readable. <a href="https://api.shadowdewuff.gay/api" target="_blank" rel="noopener">api.shadowdewuff.gay/api</a> lists them, and each returns exactly what this section describes and nothing more. What the API knows about a User is precisely what it returns to them.</p>
 
           <h3>Rights</h3>
           <p>Users in the EU or EEA have the right to access, rectify, erase, restrict and object to processing of their personal data, and to data portability. These rights apply to a stored request for as long as its 60-day retention lasts; after that, or once a specific request has already been deleted, there is nothing left of it to act on, except operational logs the infrastructure provider may separately hold as processor, which will be passed on. Requests and objections can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>. Users also have the right to lodge a complaint with their national data protection supervisory authority.</p>
@@ -201,7 +198,7 @@
           </ul>
 
           <h3>Rights</h3>
-          <p>The rights described under Diagnostics API, above, apply to sign-in data too, for as long as it is held. Requests can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>.</p>
+          <p>The rights described under Diagnostics, above, apply to sign-in data too, for as long as it is held. Requests can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>.</p>
         </section>
 
         <footer>
