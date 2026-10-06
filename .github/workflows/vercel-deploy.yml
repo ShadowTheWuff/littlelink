@@ -1,12 +1,10 @@
 name: Deploy to Vercel
 
-# Deploys through the Vercel CLI on a Namespace runner, instead of Vercel's
+# Deploys through the Vercel CLI on GitHub's own runners, instead of Vercel's
 # own Git integration (switched off in vercel.json so nothing deploys twice).
 # Every run, pull requests included, deploys to production.
 #
-# Needs repository secrets VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID,
-# and the Namespace GitHub app installed on this repository so the
-# namespace-profile-main runner profile below has somewhere to run.
+# Needs repository secrets VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID.
 on:
   push:
     branches: [main]
@@ -29,7 +27,7 @@ jobs:
   deploy:
     # Pull requests from forks get no secrets, so they have nothing to deploy with.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: namespace-profile-main
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
@@ -51,17 +49,6 @@ jobs:
             echo "::error::Missing repository secrets:$missing"
             exit 1
           fi
-
-      # Keeps Node and npm's download cache on a Namespace cache volume between
-      # runs, so neither setup-node nor the global CLI install below has to
-      # download them again. Needs caching turned on for the
-      # namespace-profile-main runner profile.
-      - name: Set up Node and npm cache
-        uses: namespacelabs/nscloud-cache-action@v1
-        with:
-          path: |
-            ${{ runner.tool_cache }}/node
-            /home/runner/.npm
 
       - uses: actions/setup-node@v4
         with:
