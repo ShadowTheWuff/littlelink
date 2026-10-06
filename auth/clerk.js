@@ -17,7 +17,7 @@
   // organization has no permissions at all. If this key does not match
   // Clerk's exactly, the refusal message lists the keys the account does
   // hold, which shows what to put here.
-  var REQUIRED_PERMISSION = 'log_access';
+  var REQUIRED_PERMISSION = 'org:log_access:log_enabled';
 
   // The organization that carries it. A fresh sign-in leaves the active
   // organization null, which is why start() selects this one before
