@@ -85,6 +85,7 @@
           <ul role="list">
             <li><strong>Google Analytics</strong> sets cookies named <code>_ga</code>, <code>_ga_*</code> and <code>_gid</code> to distinguish visitors and sessions. <code>_ga</code> and <code>_ga_*</code> persist up to two years; <code>_gid</code> for 24 hours. Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out browser add-on</a> stops this without needing to block cookies generally.</li>
             <li><strong>Vercel Web Analytics</strong> is cookieless by design; it does not set any.</li>
+            <li><strong>Clerk</strong>, the sign-in service for the admin page (<code>/admin</code>), sets cookies only on that page, where its sign-in form loads; no other page loads it. They keep a signed-in session working and are strictly necessary for that sign-in. They may be set when the admin page is opened, even without signing in. See Sign-in for the admin area, below.</li>
             <li>This site keeps two things in your browser's own storage, not a cookie: <code>sessionStorage</code> holds the &ldquo;cluster&rdquo; footer label for five minutes (see Diagnostics API, below), and <code>localStorage</code> remembers, once you dismiss this notice, that you have seen it. Neither is sent anywhere; both stay on your device and can be cleared from your browser's site data settings.</li>
           </ul>
         </section>
@@ -136,7 +137,7 @@
           <p>Every page requests <code>/api/debug</code> once when it loads, to fill in the &ldquo;cluster&rdquo; label at the foot of the page. The <a href="/.debug/">debug page</a> additionally requests <code>/api/health</code>, <code>/api/time</code>, <code>/api/ip</code> and <code>/api/session</code>. No other page requests anything else.</p>
 
           <h3>What the API processes</h3>
-          <p>Answering any web request necessarily involves the following. The API receives it, uses it to compose a reply, and stores it in a Vercel Blob for 60 days, after which it is deleted &mdash; unless the Owner receives a valid legal request to keep it for longer. See Retention, below.</p>
+          <p>Answering any web request necessarily involves the following. The API receives it, uses it to compose a reply, and stores it in a Vercel Blob for 60 days, after which it is deleted, unless the Owner receives a valid legal request to keep it for longer. See Retention, below.</p>
           <ul role="list">
             <li>IP address, as seen by the infrastructure provider's network</li>
             <li>Approximate location derived from that address by the provider: country, region, city and city-level coordinates. It is not precise, and no location permission is requested from the browser</li>
@@ -170,6 +171,37 @@
 
           <h3>Rights</h3>
           <p>Users in the EU or EEA have the right to access, rectify, erase, restrict and object to processing of their personal data, and to data portability. These rights apply to a stored request for as long as its 60-day retention lasts; after that, or once a specific request has already been deleted, there is nothing left of it to act on, except operational logs the infrastructure provider may separately hold as processor, which will be passed on. Requests and objections can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>. Users also have the right to lodge a complaint with their national data protection supervisory authority.</p>
+        </section>
+
+        <section aria-labelledby="auth-heading">
+          <h2 id="auth-heading">Sign-in for the admin area</h2>
+          <p>The admin page, at <code>/admin</code>, is a restricted area for the Owner and anyone the Owner authorizes. Signing in to it is handled by Clerk, Inc., an authentication service, through its sign-in servers at <code>clerk.me.shadowdewuff.gay</code>. No other page asks anyone to sign in or loads Clerk.</p>
+
+          <h3>What is processed</h3>
+          <p>For an account that signs in, Clerk processes:</p>
+          <ul role="list">
+            <li>The account's email address, and its name if one is set</li>
+            <li>One-time sign-in codes sent to that email address, and one-time sign-in links</li>
+            <li>The account's organization membership, role and permissions, which decide whether it may see the admin dashboard</li>
+            <li>What is needed to keep the account signed in securely: IP address, browser user agent, and sign-in and activity times</li>
+          </ul>
+          <p>Opening <code>/admin</code> without signing in still loads Clerk's sign-in form, so the browser connects to Clerk's servers and Clerk may set its cookies (see Cookies, above). Clerk holds account data only for people who have an account.</p>
+          <p>A one-time sign-in link carries its code in the address, after <code>__clerk_ticket=</code>. The page removes it from the address bar as it loads, before Google Analytics runs, so the code is not sent to analytics.</p>
+
+          <h3>Purpose and legal basis</h3>
+          <p>The purpose is keeping the admin area restricted to the accounts allowed to use it. Under Article 6(1)(f) of the GDPR the legal basis is the Owner's legitimate interest in protecting the administration of the site. Nothing collected for sign-in is used for any other purpose.</p>
+
+          <h3>Retention</h3>
+          <p>Account data is kept for as long as the account exists. The Owner can delete an account at any time, and will on request; Clerk then removes it under its own retention terms. Clerk may separately keep security and operational logs of its own, as the Owner's processor, under its own terms.</p>
+
+          <h3>Where it runs</h3>
+          <p>Clerk, Inc. is established in the United States and acts as the Owner's processor for sign-in, so sign-in data may be processed in the United States.</p>
+          <ul role="list">
+            <li><a href="https://clerk.com/legal/privacy" target="_blank" rel="noopener">Clerk privacy policy</a></li>
+          </ul>
+
+          <h3>Rights</h3>
+          <p>The rights described under Diagnostics API, above, apply to sign-in data too, for as long as it is held. Requests can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>.</p>
         </section>
 
         <footer>
