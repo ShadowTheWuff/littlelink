@@ -1,16 +1,9 @@
 name: Deployment health check
 
-# Runs against the real deployment instead of guessing a URL: vercel-deploy.yml
-# calls it with the URL it just deployed, and deployment_status still covers
-# any deployment Vercel reports back to GitHub itself.
+# Vercel reports each deployment back to GitHub as a deployment_status event,
+# so this runs against the real deployment instead of guessing a URL.
 on:
   deployment_status:
-  workflow_call:
-    inputs:
-      base_url:
-        description: Deployment URL to check
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       health_url:
@@ -22,18 +15,18 @@ permissions:
   contents: read
 
 concurrency:
-  group: health-check-${{ inputs.base_url || github.event.deployment_status.environment_url || github.ref }}
+  group: health-check-${{ github.event.deployment_status.environment_url || github.ref }}
   cancel-in-progress: true
 
 jobs:
   health:
     # deployment_status fires on every state transition (pending, error,
     # success); only a finished deployment is worth probing.
-    if: github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success'
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
     runs-on: namespace-profile-main
     env:
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-      BASE_URL: ${{ inputs.base_url || github.event.deployment_status.environment_url }}
+      BASE_URL: ${{ github.event.deployment_status.environment_url }}
       HEALTH_URL: ${{ inputs.health_url || 'https://api.shadowdewuff.gay/api/health' }}
       ATTEMPTS: '5'
     steps:

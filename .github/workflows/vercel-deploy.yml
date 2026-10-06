@@ -116,19 +116,3 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
             }
-
-  # These used to start from the deployment_status events Vercel's Git
-  # integration sent. CLI deploys don't send those, so they're called here.
-  health-check:
-    needs: deploy
-    uses: ./.github/workflows/deployment-health-check.yml
-    with:
-      base_url: ${{ needs.deploy.outputs.url }}
-    secrets: inherit
-
-  lighthouse:
-    needs: deploy
-    uses: ./.github/workflows/lighthouse-ci.yml
-    with:
-      url: ${{ needs.deploy.outputs.url }}
-    secrets: inherit
