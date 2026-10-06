@@ -6,7 +6,7 @@ name: Deploy to Vercel
 #
 # Needs repository secrets VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID,
 # and the Namespace GitHub app installed on this repository so the
-# nscloud-* runner label below has somewhere to run.
+# namespace-profile-main runner profile below has somewhere to run.
 on:
   push:
     branches: [main]
@@ -28,7 +28,7 @@ jobs:
   deploy:
     # Pull requests from forks get no secrets, so they have nothing to deploy with.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: nscloud-ubuntu-22.04-amd64-2x4
+    runs-on: namespace-profile-main
     permissions:
       contents: read
       pull-requests: write
