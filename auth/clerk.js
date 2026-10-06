@@ -11,18 +11,19 @@
 // API will answer. See the note on admin/index.html for why that is an
 // honest description of what it protects.
 (function () {
-  // Custom permission from the log_acces feature (Clerk > Configure >
-  // Features). Clerk scopes custom permissions to an organization and
-  // checks them against whichever one is active on the session, so an
-  // account with no active organization has no permissions at all.
-  var REQUIRED_PERMISSION = 'log_acces:log_enabled';
+  // Custom permission set up in Clerk (Configure > Features). Clerk scopes
+  // custom permissions to an organization and checks them against
+  // whichever one is active on the session, so an account with no active
+  // organization has no permissions at all. If this key does not match
+  // Clerk's exactly, the refusal message lists the keys the account does
+  // hold, which shows what to put here.
+  var REQUIRED_PERMISSION = 'log_access';
 
   // The organization that carries it. A fresh sign-in leaves the active
   // organization null, which is why start() selects this one before
   // judging the permission - without that step a correctly configured
   // account is still refused.
-  // Slug: tannerknapp-1790634481795651123
-  var ORGANIZATION_ID = 'org_3JyXrbmV91342ZuMZgDEheZF0zl';
+  var ORGANIZATION_ID = 'org_3KIeZpy6RgDWrr3YABEkWduvLz7';
 
   // Clerk.addListener fires on every client/session resource change - it
   // fires even while the page sits idle - so nothing below may assume it
@@ -49,6 +50,22 @@
     var session = window.Clerk && window.Clerk.session;
     if (!session || typeof session.checkAuthorization !== 'function') return false;
     return session.checkAuthorization({ permission: REQUIRED_PERMISSION }) === true;
+  }
+
+  // Says which permissions the account does hold in the organization, so a
+  // refusal caused by a mistyped key is obvious from the page itself. Null
+  // (the page's generic wording) when the membership list isn't available.
+  function deniedMessage(user) {
+    var memberships = (user && user.organizationMemberships) || [];
+    for (var i = 0; i < memberships.length; i++) {
+      var m = memberships[i];
+      if (m && m.organization && m.organization.id === ORGANIZATION_ID) {
+        var held = (m.permissions || []).join(', ') || 'none';
+        return 'This account does not have the ' + REQUIRED_PERMISSION + ' permission, ' +
+          'so the dashboard is hidden. Its permissions in that organization are: ' + held + '.';
+      }
+    }
+    return null;
   }
 
   function mountSignIn() {
@@ -101,7 +118,7 @@
     }
 
     if (!hasPermission()) {
-      emit('onDenied', user, null);
+      emit('onDenied', user, deniedMessage(user));
       return;
     }
 
