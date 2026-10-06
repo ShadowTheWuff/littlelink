@@ -2,7 +2,7 @@
 
 <!--
   Admin dashboard, gated behind Clerk (https://clerk.com) and the
-  log_acces:log_enabled permission (Configure > Features > log_acces).
+  log_access permission (Configure > Features).
   The Clerk wiring - SDK load, sign-in widget, organization and
   permission check - lives in auth/clerk.js; js/admin.js only renders
   this page. The two script tags below stay here because the
@@ -219,7 +219,7 @@
 
         <h1>Admin</h1>
 
-        <p class="admin-note">Signing in here only changes what <em>this page</em> shows you - the deployment info below comes from the same public, unauthenticated <code>/api/debug</code> endpoint the <a href="../.debug/">/.debug page</a> already calls without any login. Clerk gates the dashboard view, not the underlying data; locking the data itself down would mean the API verifying a Clerk session server-side, which lives in a separate deployment this page doesn't control. The view needs the <code>log_acces:log_enabled</code> permission, which Clerk only grants through an organization role, so a signed-in account with no active organization is refused.</p>
+        <p class="admin-note">Signing in here only changes what <em>this page</em> shows you - the deployment info below comes from the same public, unauthenticated <code>/api/debug</code> endpoint the <a href="../.debug/">/.debug page</a> already calls without any login. Clerk gates the dashboard view, not the underlying data; locking the data itself down would mean the API verifying a Clerk session server-side, which lives in a separate deployment this page doesn't control. The view needs the <code>log_access</code> permission, which Clerk only grants through an organization role, so a signed-in account with no active organization is refused.</p>
 
         <p class="admin-error" id="admin-error" role="alert" hidden></p>
 
