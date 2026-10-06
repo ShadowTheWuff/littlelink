@@ -2,7 +2,7 @@ name: Deploy to Vercel
 
 # Deploys through the Vercel CLI on a Namespace runner, instead of Vercel's
 # own Git integration (switched off in vercel.json so nothing deploys twice).
-# Pushes to main go to production; pull requests get a preview.
+# Every run, pull requests included, deploys to production.
 #
 # Needs repository secrets VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID,
 # and the Namespace GitHub app installed on this repository so the
@@ -16,9 +16,10 @@ on:
 permissions:
   contents: read
 
+# One production deploy at a time, queued rather than cancelled mid-upload.
 concurrency:
-  group: vercel-deploy-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: vercel-production
+  cancel-in-progress: false
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -33,12 +34,8 @@ jobs:
       contents: read
       pull-requests: write
     environment:
-      name: ${{ (github.event_name == 'pull_request' || github.ref != 'refs/heads/main') && 'Preview' || 'Production' }}
+      name: Production
       url: ${{ steps.deploy.outputs.url }}
-    outputs:
-      url: ${{ steps.deploy.outputs.url }}
-    env:
-      VERCEL_ENV: ${{ (github.event_name == 'pull_request' || github.ref != 'refs/heads/main') && 'preview' || 'production' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -74,39 +71,30 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Pull Vercel project settings
-        run: vercel pull --yes --environment="$VERCEL_ENV" --token="${{ secrets.VERCEL_TOKEN }}"
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
 
       # Builds locally into .vercel/output (static files plus middleware.js),
       # so Vercel only has to upload what was built here.
       - name: Build
-        run: |
-          if [ "$VERCEL_ENV" = production ]; then
-            vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
-          else
-            vercel build --token="${{ secrets.VERCEL_TOKEN }}"
-          fi
+        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Deploy
         id: deploy
         run: |
           set -euo pipefail
-          if [ "$VERCEL_ENV" = production ]; then
-            url=$(vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
-          else
-            url=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_TOKEN }}")
-          fi
+          url=$(vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
           echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "Deployed to $url ($VERCEL_ENV)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployed to $url (production)" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Comment preview URL
+      - name: Comment deployment URL
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           DEPLOY_URL: ${{ steps.deploy.outputs.url }}
         with:
           script: |
-            const marker = '<!-- vercel-preview -->';
-            const body = `${marker}\nPreview for ${context.sha.slice(0, 7)}: ${process.env.DEPLOY_URL}`;
+            const marker = '<!-- vercel-deploy -->';
+            const body = `${marker}\nDeployed ${context.sha.slice(0, 7)} to production: ${process.env.DEPLOY_URL}`;
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
             const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
