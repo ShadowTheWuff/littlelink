@@ -46,6 +46,15 @@ jobs:
         with:
           node-version: 20
 
+      # Keeps npm's download cache on a Namespace cache volume between runs, so
+      # the global CLI install below doesn't refetch every package. Needs
+      # caching turned on for the namespace-profile-main runner profile.
+      - name: Set up npm cache
+        uses: namespacelabs/nscloud-cache-action@v1
+        with:
+          path: |
+            /home/runner/.npm
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
