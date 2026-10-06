@@ -42,18 +42,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - name: Check Vercel secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          missing=""
+          [ -n "$VERCEL_TOKEN" ] || missing="$missing VERCEL_TOKEN"
+          [ -n "$VERCEL_ORG_ID" ] || missing="$missing VERCEL_ORG_ID"
+          [ -n "$VERCEL_PROJECT_ID" ] || missing="$missing VERCEL_PROJECT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing"
+            exit 1
+          fi
 
-      # Keeps npm's download cache on a Namespace cache volume between runs, so
-      # the global CLI install below doesn't refetch every package. Needs
-      # caching turned on for the namespace-profile-main runner profile.
-      - name: Set up npm cache
+      # Keeps Node and npm's download cache on a Namespace cache volume between
+      # runs, so neither setup-node nor the global CLI install below has to
+      # download them again. Needs caching turned on for the
+      # namespace-profile-main runner profile.
+      - name: Set up Node and npm cache
         uses: namespacelabs/nscloud-cache-action@v1
         with:
           path: |
+            ${{ runner.tool_cache }}/node
             /home/runner/.npm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest

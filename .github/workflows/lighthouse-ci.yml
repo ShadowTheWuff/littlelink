@@ -40,19 +40,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Keeps Node and npm's download cache on a Namespace cache volume between
+      # runs, so neither setup-node nor the global CLI install below has to
+      # download them again. Needs caching turned on for the
+      # namespace-profile-main runner profile.
+      - name: Set up Node and npm cache
+        uses: namespacelabs/nscloud-cache-action@v1
+        with:
+          path: |
+            ${{ runner.tool_cache }}/node
+            /home/runner/.npm
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      # Keeps npm's download cache on a Namespace cache volume between runs, so
-      # the global CLI install below doesn't refetch every package. Needs
-      # caching turned on for the namespace-profile-main runner profile.
-      - name: Set up npm cache
-        uses: namespacelabs/nscloud-cache-action@v1
-        with:
-          path: |
-            /home/runner/.npm
 
       - name: Run Lighthouse CI
         run: |
