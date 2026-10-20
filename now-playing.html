@@ -1,0 +1,34 @@
+<!doctype html>
+<html class="theme-auto" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Now playing · ShadowTheWuff</title>
+  <link rel="icon" href="/images/avatar.png">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/now-playing.css">
+  <script src="/js/now-playing.js" defer></script>
+</head>
+<body>
+  <main class="container">
+    <p class="eyebrow">ShadowTheWuff’s listening room</p>
+    <h1>Now playing</h1>
+    <section class="playing-card" aria-label="Last.fm listening status">
+      <p id="playing-status" role="status">Checking Last.fm…</p>
+      <div id="track" hidden>
+        <img id="cover" width="300" height="300" alt="" hidden>
+        <h2 id="track-title"></h2>
+        <p id="artist"></p>
+        <p id="album"></p>
+        <a id="track-link" target="_blank" rel="noopener noreferrer">View track on Last.fm ↗</a>
+      </div>
+      <p id="updated" class="detail"></p>
+    </section>
+    <p class="detail">Updates every 30 seconds while this page is open.</p>
+    <p><a id="profile" href="https://www.last.fm/user/ShadowTheWuff" target="_blank" rel="noopener noreferrer">Listening history on Last.fm ↗</a></p>
+    <noscript><p>Enable JavaScript to see live listening updates.</p></noscript>
+  </main>
+</body>
+</html>
