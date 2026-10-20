@@ -1,0 +1,11 @@
+.eyebrow { font-size: .9rem; letter-spacing: .06em; opacity: .7; }
+.playing-card { border: 1px solid #8885; border-radius: 1.5rem; padding: 1.5rem; margin: 2rem 0 1rem; }
+#cover { display: block; width: min(100%, 300px); height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 1rem; margin: 1.5rem auto; }
+#track-title { font-size: 1.6rem; margin: 1rem 0 .5rem; overflow-wrap: anywhere; }
+#artist, #album { margin-bottom: .5rem; overflow-wrap: anywhere; }
+#album, .detail { font-size: .875rem; opacity: .7; }
+#playing-status { margin: 0; font-weight: 600; }
+#playing-status[data-playing="true"]::before { content: "● "; color: #21b866; }
+#track-link { display: inline-block; margin-top: 1rem; }
+#updated { margin: 1rem 0 0; }
+[hidden], #cover[hidden] { display: none !important; }
