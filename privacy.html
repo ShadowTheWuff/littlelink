@@ -25,6 +25,38 @@
     <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <!-- Unqualified fallback for link unfurlers that ignore `media` -->
+    <meta name="theme-color" content="#121212">
+
+    <!-- Social Sharing (Open Graph & Twitter) - controls how this page looks
+         when shared on social platforms and in chat apps.
+         og:url and og:image must be full absolute URLs. -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Shadowthewuff">
+    <meta property="og:title" content="Privacy Overview">
+    <meta property="og:description" content="Privacy policy and data collection information for this site.">
+    <meta property="og:url" content="https://me.shadowdewuff.gay/privacy">
+    <meta property="og:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
+    <meta property="og:image:alt" content="Shadowthewuff avatar">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Privacy Overview">
+    <meta name="twitter:description" content="Privacy policy and data collection information for this site.">
+    <meta name="twitter:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta name="twitter:image:alt" content="Shadowthewuff avatar">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH1F0X7SZW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WH1F0X7SZW');
+    </script>
+    <!-- / Google tag -->
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/reset.css">
@@ -47,6 +79,17 @@
           <p>You can read our full privacy policy here: <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=ddb41861-0e4f-4848-8409-633b6c761a08" target="_blank" rel="noopener">Privacy Policy</a>.</p>
         </section>
 
+        <section aria-labelledby="cookies-heading">
+          <h2 id="cookies-heading">Cookies</h2>
+          <p>This is a notice about cookies and similar local storage this site uses, not a consent request: the services below are not blocked while you decide. If you would rather they did not run, the most reliable option is a browser extension that blocks them, or declining cookies in your browser settings.</p>
+          <ul role="list">
+            <li><strong>Google Analytics</strong> sets cookies named <code>_ga</code>, <code>_ga_*</code> and <code>_gid</code> to distinguish visitors and sessions. <code>_ga</code> and <code>_ga_*</code> persist up to two years; <code>_gid</code> for 24 hours. Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out browser add-on</a> stops this without needing to block cookies generally.</li>
+            <li><strong>Vercel Web Analytics</strong> is cookieless by design; it does not set any.</li>
+            <li><strong>Clerk</strong>, the sign-in service for the admin page (<code>/admin</code>), sets cookies only on that page, where its sign-in form loads; no other page loads it. They keep a signed-in session working and are strictly necessary for that sign-in. They may be set when the admin page is opened, even without signing in. See Sign-in for the admin area, below.</li>
+            <li>This site keeps two things in your browser's own storage, not a cookie: <code>sessionStorage</code> holds the &ldquo;cluster&rdquo; footer label for five minutes (see Diagnostics, below), and <code>localStorage</code> remembers, once you dismiss this notice, that you have seen it. Neither is sent anywhere; both stay on your device and can be cleared from your browser's site data settings.</li>
+          </ul>
+        </section>
+
         <section aria-labelledby="analytics-heading">
           <h2 id="analytics-heading">Analytics</h2>
           <p>The services contained in this section enable the Owner to monitor and analyze web traffic and can be used to keep track of User behavior.</p>
@@ -55,6 +98,12 @@
           <ul role="list">
             <li>Personal Data: various types of Data as specified in the privacy policy of the service</li>
             <li><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Privacy Policy</a></li>
+          </ul>
+
+          <h3>Google Analytics (Google LLC)</h3>
+          <ul role="list">
+            <li>Personal Data: Usage Data; various types of Data as specified in the privacy policy of the service</li>
+            <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a></li>
           </ul>
         </section>
 
@@ -82,11 +131,97 @@
           </ul>
         </section>
 
+        <section aria-labelledby="api-heading">
+          <h2 id="api-heading">Diagnostics</h2>
+          <p>This website calls a small diagnostics service of the Owner's own. It reports which Vercel location served a request, so the Owner can tell where and how the site is being delivered. It is a separate deployment from this website, run by the same Owner on the same infrastructure provider.</p>
+          <p>Every page makes one request to it when it loads, to fill in the &ldquo;cluster&rdquo; label at the foot of the page. The <a href="/.debug/">debug page</a> makes a few more, to show its diagnostic details. No other page requests anything else.</p>
+
+          <h3>What the service processes</h3>
+          <p>Answering any web request necessarily involves the following. The service receives it, uses it to compose a reply, and stores it in a Vercel Blob for 60 days, after which it is deleted, unless the Owner receives a valid legal request to keep it for longer. See Retention, below.</p>
+          <ul role="list">
+            <li>IP address, as seen by the infrastructure provider's network</li>
+            <li>Approximate location derived from that address by the provider: country, region, city and city-level coordinates. It is not precise, and no location permission is requested from the browser</li>
+            <li>Time zone, as inferred from the same address</li>
+            <li>Request headers, including the browser's user agent</li>
+          </ul>
+          <p>The reply is sent to the User's own browser and is displayed there. On the debug page the User can see the whole of it.</p>
+
+          <h3>Purpose and legal basis</h3>
+          <p>The purpose is operating and diagnosing this website: knowing which edge location answered a request is how the Owner tells a local fault from a general one, including a fault that is no longer happening by the time it is looked into. Under Article 6(1)(f) of the GDPR the legal basis is the Owner's legitimate interest in keeping the site working and diagnosable. The processing is limited to what a web request unavoidably carries, and nothing is combined with anything else or used to build a profile.</p>
+          <p>The one further use is sanctions compliance. The Owner and the infrastructure provider are both subject to United States sanctions and export-control law, so a request that appears to come from a comprehensively embargoed jurisdiction is refused, with an HTTP 451 page explaining why, before any page is served; the provider may also refuse it independently of the Owner under its own terms. The check reads only the country, and for Ukraine the region, that the provider's edge network infers from the IP address. No list of named individuals is consulted, nothing is decided about the User as a person, and a refused request is stored and deleted on the same 60-day footing as any other.</p>
+          <p>A third country's law is not in itself a &ldquo;legal obligation&rdquo; for the purposes of Article 6(1)(c) of the GDPR, which means obligations under EU or Member State law. The legal basis for this use is therefore again Article 6(1)(f): the Owner's legitimate interest in operating the site, and keeping its hosting, without breaking the law the Owner and its provider are subject to.</p>
+          <p>Country inferred from an IP address is approximate and can be wrong, and a VPN or a misattributed address can produce the wrong answer. The 451 page says so and gives the same address, so a User who believes access was refused in error can write to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>.</p>
+
+          <h3>Retention</h3>
+          <p>Each request is stored in a Vercel Blob for 60 days, then deleted automatically. The Owner keeps it for longer than that only if required to by a valid legal request, such as a court order or a lawful request from a government authority; no other reason extends it. The infrastructure provider may separately retain operational request logs of its own as the Owner's processor, under its own terms, in the ordinary course of running the servers.</p>
+
+          <h3>Storage on the User's device</h3>
+          <p>The result of the cluster label's request is kept in the browser's <code>sessionStorage</code>, under the key <code>ll-cluster</code>, for five minutes, so moving between pages does not repeat the request. It never leaves the device and is discarded when the tab is closed. Clearing site data removes it.</p>
+          <p>The service sets no cookies for ordinary visitors. Cookies are set only when the Owner signs in to administer the site, through Sign in with Vercel; those are strictly necessary for that sign-in and are never set for anyone who does not use it.</p>
+
+          <h3>Where it runs</h3>
+          <p>The service runs on Vercel's edge network and is answered from the location nearest the User, which for Users in the EU or EEA means an edge location in or near that region. Vercel Inc. is established in the United States and is the Owner's processor for this; transfers outside the EEA are covered by the Standard Contractual Clauses in Vercel's data processing agreement.</p>
+          <ul role="list">
+            <li><a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Vercel privacy policy</a></li>
+            <li><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">Vercel data processing addendum</a></li>
+          </ul>
+
+          <h3>Rights</h3>
+          <p>Users in the EU or EEA have the right to access, rectify, erase, restrict and object to processing of their personal data, and to data portability. These rights apply to a stored request for as long as its 60-day retention lasts; after that, or once a specific request has already been deleted, there is nothing left of it to act on, except operational logs the infrastructure provider may separately hold as processor, which will be passed on. Requests and objections can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>. Users also have the right to lodge a complaint with their national data protection supervisory authority.</p>
+        </section>
+
+        <section aria-labelledby="auth-heading">
+          <h2 id="auth-heading">Sign-in for the admin area</h2>
+          <p>The admin page, at <code>/admin</code>, is a restricted area for the Owner and anyone the Owner authorizes. Signing in to it is handled by Clerk, Inc., an authentication service, through its sign-in servers at <code>clerk.me.shadowdewuff.gay</code>. No other page asks anyone to sign in or loads Clerk.</p>
+
+          <h3>What is processed</h3>
+          <p>For an account that signs in, Clerk processes:</p>
+          <ul role="list">
+            <li>The account's email address, and its name if one is set</li>
+            <li>One-time sign-in codes sent to that email address, and one-time sign-in links</li>
+            <li>The account's organization membership, role and permissions, which decide whether it may see the admin dashboard</li>
+            <li>What is needed to keep the account signed in securely: IP address, browser user agent, and sign-in and activity times</li>
+          </ul>
+          <p>Opening <code>/admin</code> without signing in still loads Clerk's sign-in form, so the browser connects to Clerk's servers and Clerk may set its cookies (see Cookies, above). Clerk holds account data only for people who have an account.</p>
+          <p>A one-time sign-in link carries its code in the address, after <code>__clerk_ticket=</code>. The page removes it from the address bar as it loads, before Google Analytics runs, so the code is not sent to analytics.</p>
+
+          <h3>Purpose and legal basis</h3>
+          <p>The purpose is keeping the admin area restricted to the accounts allowed to use it. Under Article 6(1)(f) of the GDPR the legal basis is the Owner's legitimate interest in protecting the administration of the site. Nothing collected for sign-in is used for any other purpose.</p>
+
+          <h3>Retention</h3>
+          <p>Account data is kept for as long as the account exists. The Owner can delete an account at any time, and will on request; Clerk then removes it under its own retention terms. Clerk may separately keep security and operational logs of its own, as the Owner's processor, under its own terms.</p>
+
+          <h3>Where it runs</h3>
+          <p>Clerk, Inc. is established in the United States and acts as the Owner's processor for sign-in, so sign-in data may be processed in the United States.</p>
+          <ul role="list">
+            <li><a href="https://clerk.com/legal/privacy" target="_blank" rel="noopener">Clerk privacy policy</a></li>
+          </ul>
+
+          <h3>Rights</h3>
+          <p>The rights described under Diagnostics, above, apply to sign-in data too, for as long as it is held. Requests can be sent to <a href="mailto:webmaster@shadowdewuff.gay">webmaster@shadowdewuff.gay</a>.</p>
+        </section>
+
         <footer>
-          <p>Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
+          <p><a href="affiliates.html">Affiliate links</a> | <a href="tos.html">Terms of Service</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink.</a></p>
+          <p class="copyright">&copy; <span id="copyright-year">2026</span> ShadowTheWuff</p>
+          <p class="cluster" data-cluster>cluster: &hellip;</p>
         </footer>
       </div>
     </main>
+
+    <!-- Cookie notice - see js/cookie-notice.js. Hidden by default; the script
+         un-hides it for a visitor who has not dismissed it yet. -->
+    <div class="cookie-notice" id="cookie-notice" hidden>
+      <p>This site uses cookies for analytics. See the Cookies section above for details.</p>
+      <button type="button" class="cookie-notice-dismiss" id="cookie-notice-dismiss">Got it</button>
+    </div>
+    <script src="js/cookie-notice.js" defer></script>
+    <script src="js/copyright.js" defer></script>
+
+    <!-- Fills the cluster label in the footer from the /api/debug endpoint
+         hosted on the nitro-starter deployment; js/api.js holds its base URL. -->
+    <script src="js/api.js"></script>
+    <script src="js/cluster.js" defer></script>
 
     <!-- Vercel Web Analytics -->
     <script>

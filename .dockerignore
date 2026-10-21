@@ -12,6 +12,9 @@
 docker
 .do
 wrangler.toml
+
+# Vercel Routing Middleware: runs on Vercel, must not be served as a file here.
+middleware.js
 .assetsignore
 .dockerignore
 
@@ -19,6 +22,8 @@ wrangler.toml
 README.md
 LICENSE.md
 VERSION.md
+ai.md
+.vercelignore
 
 # Logs
 *.log

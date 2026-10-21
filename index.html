@@ -14,11 +14,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Page Title - Change this to your name/brand (50-60 characters recommended) -->
-    <title>LittleLink</title>
+    <title>Shadowthewuff</title>
     <link rel="icon" type="image/png" href="images/avatar.png"> <!-- Update this with your own favicon -->
 
     <!-- Meta Description - Write a description (150-160 characters recommended) -->
-    <meta name="description" content="Meow">
+    <meta name="description" content="Profiles and listening history for Shadowthewuff, including VRChat, Steam, MusicBrainz, ListenBrainz, AniList, Medal.tv, and ORCID.">
 
     <!-- Canonical URL - Helps prevent duplicate content issues -->
     <link rel="canonical" href="https://me.shadowdewuff.gay">
@@ -29,17 +29,41 @@
     <!-- Browser UI Color - Matches the default light/dark theme backgrounds -->
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <!-- Unqualified fallback. Browsers use the media-matched tags above; link
+         unfurlers that ignore `media` (Discord colors its embed stripe from
+         theme-color) have something to read. -->
+    <meta name="theme-color" content="#121212">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH1F0X7SZW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WH1F0X7SZW');
+    </script>
+    <!-- / Google tag -->
 
     <!-- Social Sharing (Open Graph & Twitter) - Uncomment and fill in to control how your page
          looks when shared on social platforms and in chat apps.
          og:url and og:image must be full absolute URLs. -->
     
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Wruff (me site)">
-    <meta property="og:description" content="Meow.">
-    <meta property="og:url" content="https://me.shadowdewuff.gay">
-    <meta property="og:image" content="https://yourwebsite.com/images/avatar@2x.png">
+    <meta property="og:site_name" content="Shadowthewuff">
+    <meta property="og:title" content="Shadowthewuff">
+    <meta property="og:description" content="Profiles and listening history for Shadowthewuff.">
+    <meta property="og:url" content="https://me.shadowdewuff.gay/">
+    <meta property="og:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
+    <meta property="og:image:alt" content="Shadowthewuff avatar">
+    <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Shadowthewuff">
+    <meta name="twitter:description" content="Profiles and listening history for Shadowthewuff.">
+    <meta name="twitter:image" content="https://me.shadowdewuff.gay/images/avatar@2x.png">
+    <meta name="twitter:image:alt" content="Shadowthewuff avatar">
 
 
     <!-- Font Preloads - Lets the browser fetch fonts in parallel with the stylesheets -->
@@ -73,13 +97,13 @@
 
               Be sure to replace the src with your own image path and update the alt text
             -->
-            <img class="avatar avatar--rounded" src="images/avatar.png" srcset="images/avatar@2x.png 2x" alt="LittleLink" width="128" height="128" fetchpriority="high">
+            <img class="avatar avatar--rounded" src="images/avatar.png" srcset="images/avatar@2x.png 2x" alt="Shadowthewuff" width="128" height="128" fetchpriority="high">
 
             <!-- Replace with your name or brand -->
             <h1>Shadowthewuff</h1>
 
             <!-- Add a short description about yourself or your brand -->
-            <p>An open source DIY Linktree alternative.</p>
+            <p>Profiles, listening history, and work.</p>
 
             <!-- All your buttons go here -->
             <nav class="button-stack" aria-label="Links">
@@ -90,30 +114,63 @@
               <!-- Steam -->
               <a class="button button-steam" href="https://steamcommunity.com/id/ShadowTheWuff/" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/steam.svg" alt="Steam Logo">Steam</a>
 
+              <!-- Roblox -->
+              <a class="button button-roblox" href="https://www.roblox.com/users/8546217074/profile" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/roblox.svg" alt="Roblox Logo">Roblox</a>
+
               <!-- Last.fm -->
-              <a class="button button-last-fm" href="https://www.last.fm/user/ShadowTheWuff" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/last-fm.svg" alt="Last.fm Logo">Last.fm</a>
+              <!-- <a class="button button-last-fm" href="https://www.last.fm/user/ShadowTheWuff" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/last-fm.svg" alt="Last.fm Logo">Last.fm</a> -->
+
+              <!-- MusicBrainz -->
+              <a class="button button-musicbrainz" href="https://musicbrainz.org/user/shadowthewuff" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons-extended/musicbrainz.svg" alt="MusicBrainz Logo">MusicBrainz</a>
+
+              <!-- ListenBrainz -->
+              <a class="button button-listenbrainz" href="https://listenbrainz.org/user/shadowthewuff/" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons-extended/listenbrainz.svg" alt="ListenBrainz Logo">ListenBrainz</a>
 
               <!-- AniList -->
               <a class="button button-anilist" href="https://anilist.co/user/shadowthewuff/" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons-extended/anilist.svg" alt="AniList Logo">AniList</a>
 
+              <!-- Tracker Network -->
+              <a class="button button-tracker-network" href="https://tracker.network/profile/example" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons-extended/tracker-network.svg" alt="Tracker Network Logo">Tracker Network</a>
+
+              <!-- Medal.tv -->
+              <a class="button button-medal-tv" href="https://medal.tv/u/shadowdewufffff?invite=ur-MSxNY2UsNDc1ODc1NDYx" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/medal-tv.svg" alt="Medal.tv Logo">Medal.tv</a>
+
+              <!-- TikTok -->
+              <a class="button button-tiktok" href="https://www.tiktok.com/@shadowthewuff" target="_blank" rel="noopener"><img class="icon" src="images/icons/tiktok-logo.svg" alt="TikTok"></a>
+
+              <!-- ORCID iD -->
+              <a class="button button-orcid-id" href="https://orcid.org/0009-0004-2732-7959" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons-extended/orcid-id.svg" alt="ORCID iD Logo">ORCID iD</a>
+
               <!-- Revolut -->
               <!-- <a class="button button-revolut" href="#" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/icons/revolut.svg" alt="Revolut Logo">Revolut</a> -->
 
-              <!--
               Gay :3
-              <a class="button button-default" href="https://example.com" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/mlm.png" alt="MLM Flag">gay af</a>
-              -->
+              <a class="button button-default" href="https://en.wikipedia.org/wiki/Homosexuality" target="_blank" rel="noopener"><img class="icon" aria-hidden="true" src="images/mlm.png" alt="MLM Flag">gay af</a>
 
       </nav>
       </main>
 
       <!-- Feel free to add your own footer information, including updating `privacy.html` to reflect how your LittleLink fork is set up -->
       <footer>
-        <a href="privacy.html">Privacy Policy</a> | Build your own by forking <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink</a>
+        <a href="privacy.html">Privacy Policy</a> | <a href="tos.html">Terms of Service</a> | <a href="affiliates.html">Affiliate links</a> | <a href=".debug/">Debug</a> | Built with <a href="https://littlelink.io" target="_blank" rel="noopener">LittleLink</a>
+        <p class="copyright">&copy; <span id="copyright-year">2026</span> ShadowTheWuff</p>
+        <p class="cluster" data-cluster>cluster: &hellip;</p>
       </footer>
 
     </div>
   </div>
+
+  <!-- Cookie notice - see js/cookie-notice.js. Hidden by default; the script
+       un-hides it for a visitor who has not dismissed it yet. -->
+  <div class="cookie-notice" id="cookie-notice" hidden>
+    <p>This site uses cookies for analytics. See the <a href="privacy.html">Privacy Policy</a> for details.</p>
+    <button type="button" class="cookie-notice-dismiss" id="cookie-notice-dismiss">Got it</button>
+  </div>
+  <script src="js/cookie-notice.js" defer></script>
+  <script src="js/copyright.js" defer></script>
+
+  <script src="js/api.js"></script>
+  <script src="js/cluster.js" defer></script>
 
   <!-- Vercel Web Analytics -->
   <script>

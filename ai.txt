@@ -1,0 +1,31 @@
+# ai.txt - how AI systems may use this site's content.
+# This is an informal, emerging convention, not a ratified standard, and not
+# every crawler honors it. See also /llms.txt for a machine-readable summary
+# of this site aimed at assistants answering questions about it.
+
+User-agent: *
+Allow: /
+
+# Bulk scraping for model-training datasets is not permitted.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+Contact: webmaster@shadowdewuff.gay

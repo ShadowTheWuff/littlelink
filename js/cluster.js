@@ -1,0 +1,93 @@
+// Fills the "cluster:" label in the page footer with the environment and
+// region serving this visitor, as reported by the /api/debug endpoint on the
+// nitro-starter deployment (see js/api.js for where that lives and why).
+//
+// The label starts out as a placeholder in the HTML so the page never looks
+// broken; this only replaces it once real data arrives. If the endpoint can't
+// be reached the label says so. The result is kept in sessionStorage for a few
+// minutes so navigating between pages doesn't hit the function every time.
+//
+// Both halves of the label now describe that deployment rather than this one:
+// the region is the PoP nearest the visitor (which is the interesting half),
+// and the environment is the API's, so a preview of this site still reports
+// the API's production environment unless the API is previewed too.
+(function () {
+  var labels = document.querySelectorAll('[data-cluster]');
+  if (!labels.length) return;
+
+  var STORAGE_KEY = 'll-cluster';
+  var WEBMASTER = 'webmaster@shadowdewuff.gay';
+  var TTL_MS = 5 * 60 * 1000;
+  var ENV_SHORT = { production: 'prod', preview: 'preview', development: 'dev' };
+
+  function apply(text, title) {
+    Array.prototype.forEach.call(labels, function (el) {
+      el.textContent = 'cluster: ' + text;
+      if (title) { el.title = title; } else { el.removeAttribute('title'); }
+    });
+  }
+
+  // The API is a separate deployment, so it can be down while this page is
+  // perfectly fine. Say so in the label itself and offer somewhere to report
+  // it, rather than leaving the placeholder sitting there looking like a page
+  // that never finished loading. Failures are deliberately not cached, so the
+  // next page view tries again.
+  function applyError(reason) {
+    Array.prototype.forEach.call(labels, function (el) {
+      el.textContent = 'cluster: unavailable, email ';
+      if (window.LittleLinkApi) {
+        el.appendChild(window.LittleLinkApi.reportLink('/api/debug', reason, WEBMASTER));
+      } else {
+        var a = document.createElement('a');
+        a.href = 'mailto:' + WEBMASTER;
+        a.textContent = WEBMASTER;
+        el.appendChild(a);
+      }
+      el.title = reason;
+    });
+  }
+
+  function remember(text, title) {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ t: Date.now(), text: text, title: title }));
+    } catch (e) { /* storage unavailable; nothing to do */ }
+  }
+
+  if (!window.LittleLinkApi) {
+    applyError('js/api.js did not load');
+    return;
+  }
+
+  // ?apidown (see js/api.js) is asking to see the failure state, so a cached
+  // success from earlier this session shouldn't paper over it - and the
+  // resulting failure shouldn't get cached either, or the test would keep
+  // showing "down" after the flag is removed.
+  if (!window.LittleLinkApi.testDown) {
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+      if (cached && Date.now() - cached.t < TTL_MS) {
+        apply(cached.text, cached.title);
+        return;
+      }
+    } catch (e) { /* no usable cache; fall through to fetch */ }
+  }
+
+  window.LittleLinkApi.json('/api/debug')
+    .then(function (info) {
+      var env = ENV_SHORT[info.environment] || info.environment || 'unknown';
+      var region = info.region || 'unknown';
+      var text = env + '-' + region;
+      var title = info.regionName ? region + ' = ' + info.regionName : '';
+      apply(text, title);
+      remember(text, title);
+    })
+    .catch(function (err) {
+      applyError('Could not reach ' + window.LittleLinkApi.url('/api/debug') + ': ' + err.message);
+    });
+
+  // The debug page's admin-only test drives the label through this, so the
+  // failure state it shows is the real one rather than a lookalike.
+  window.addEventListener('ll:cluster-error', function (event) {
+    applyError((event.detail && event.detail.reason) || 'simulated failure');
+  });
+})();
