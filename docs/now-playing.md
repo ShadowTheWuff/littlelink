@@ -5,7 +5,7 @@ serves `now-playing.html` at this address. There is no navigation or sitemap
 entry, and the page requests no search indexing. This is an unlisted public
 page, not an authenticated private page.
 
-## Connect Last.fm
+## Connect Last.fmre
 
 1. Obtain an API key at https://www.last.fm/api/account/create.
 2. Set `LASTFM_API_KEY` in the Vercel project's environment variables.
