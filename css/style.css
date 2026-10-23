@@ -390,3 +390,15 @@ ul li {
 	font-weight:800;
 	src:url('../fonts/open-sans-v34-vietnamese_latin-ext_latin_hebrew_greek-ext_greek_cyrillic-ext_cyrillic-800.woff2') format('woff2');
 }
+
+/* Footer link styled as a button; works without JavaScript. */
+footer .icon-disclaimer-button {
+  display: inline-block;
+  padding: .5rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: .5rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+footer .icon-disclaimer-button:hover { text-decoration: underline; }
+footer .icon-disclaimer-button:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
