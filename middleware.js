@@ -18,6 +18,7 @@ const BLOCKED_COUNTRIES = new Set([
   'IR', // Iran
   'KP', // North Korea
   'SY', // Syria
+  'UK',
 //  'US'  // United States ( TEST)
 ]);
 
