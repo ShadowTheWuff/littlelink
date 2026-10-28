@@ -1,0 +1,18 @@
+.contact-page .contact-email {
+  overflow-wrap: anywhere;
+}
+
+.contact-page .button {
+  max-width: 100%;
+}
+
+.contact-page .contact-fingerprint {
+  font-size: var(--scale-0);
+}
+
+.contact-fingerprint code {
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
