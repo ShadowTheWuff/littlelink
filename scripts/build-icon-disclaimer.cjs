@@ -73,6 +73,7 @@ const html = `<!doctype html>
   <ul>${visible.map(entry).join('\n')}</ul>
   <h2>Personal and other imagery</h2>
   <ul>
+    <li><strong>Strava follow badge</strong><p>The Strava-hosted badge links to my athlete profile. The Strava name and badge belong to their respective owner. I am not affiliated with, sponsored by, or endorsed by Strava.</p><code>https://badges.strava.com/echelon-sprite-48.png</code></li>
     <li><strong>Profile avatar and favicon</strong><p>The avatar identifies Shadowthewuff, not a third-party company. The same image is used as the browser icon and in sharing previews.</p><code>images/avatar.png · images/avatar@2x.png</code></li>
     <li><strong>Gay / MLM pride flag</strong><p>A community and personal-expression symbol, not a corporate endorsement or a claim to represent everyone in that community.</p><code>images/mlm.png</code></li>
     <li><strong>Last.fm album artwork</strong><p>The now-playing page may display cover artwork supplied through Last.fm. Artwork belongs to its respective rights holders. Displaying it does not imply affiliation with Last.fm, an artist, or a record label.</p></li>

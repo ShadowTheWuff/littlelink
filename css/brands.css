@@ -502,6 +502,21 @@
 }
 
 /* Strava */
+.strava-badge- {
+  display: inline-block;
+  height: 48px;
+  margin-inline: auto;
+}
+.strava-badge- img { visibility: hidden; height: 48px; }
+.strava-badge-follow {
+  height: 48px;
+  width: 48px;
+  background: url(https://badges.strava.com/echelon-sprite-48.png) no-repeat 0 0;
+}
+.strava-badge-:hover,
+.strava-badge-:focus-visible { background-position: 0 -63px; }
+.strava-badge-:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+
 .button-strava {
 	--button-text:#ffffff;
 	--button-background:#fc5200;
