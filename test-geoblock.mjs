@@ -9,7 +9,7 @@ const call = async (country, region = '', ukBlockEnabled = true) => {
   const headers = {};
   if (country) headers['x-vercel-ip-country'] = country;
   if (region) headers['x-vercel-ip-country-region'] = region;
-  const mw = createMiddleware(async () => ukBlockEnabled);
+  const mw = createMiddleware(async () => ukBlockEnabled, () => undefined);
   const res = await mw(new Request('https://shadowdewuff.gay/', { headers }));
   return { status: res?.status ?? 200, body: res ? await res.text() : '' };
 };

@@ -5,6 +5,7 @@
 // Check sanctions against current OFAC guidance before relying on this list:
 // https://ofac.treasury.gov/sanctions-programs-and-country-information
 import { flagsClient } from '@vercel/flags-core';
+import { turnstileGate } from './lib/turnstile.js';
 
 const SANCTIONED_COUNTRIES = new Set([
   'CU', // Cuba
@@ -26,6 +27,7 @@ export const config = {
 export function createMiddleware(
   evaluateUkBlock = async () =>
     (await flagsClient.evaluate('geo-block-enabled', true)).value,
+  gate = turnstileGate,
 ) {
   return async function middleware(request) {
     const country = header(request, 'x-vercel-ip-country');
@@ -41,7 +43,7 @@ export function createMiddleware(
 
     // Vercel uses GB (not UK) for the United Kingdom.
     // No flag evaluation is needed for visitors outside the UK.
-    if (country !== 'GB') return;
+    if (country !== 'GB') return gate(request);
 
     // On evaluation failure, retain UK blocking rather than silently allowing it.
     let ukBlockEnabled = true;
@@ -51,7 +53,7 @@ export function createMiddleware(
       console.error('Unable to evaluate geo-block-enabled; defaulting to ON', error);
     }
 
-    if (!ukBlockEnabled) return;
+    if (!ukBlockEnabled) return gate(request);
     return blockedResponse(403, country);
   };
 }
