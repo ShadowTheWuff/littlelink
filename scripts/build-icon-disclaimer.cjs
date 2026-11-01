@@ -6,6 +6,7 @@ const root = path.join(__dirname, '..');
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const url = value => value.split('/').map(encodeURIComponent).join('/');
 const notes = {
+  'telegram-logo': ['Telegram', 'The supplied Telegram logo identifies my Telegram profile. I am not affiliated with, sponsored by, or endorsed by Telegram.'],
   'vrchat': ['VRChat', 'Identifies my VRChat profile. I do not represent VRChat.'],
   'steam': ['Steam', 'Identifies my Steam profile. I do not represent Steam or Valve.'],
   'roblox': ['Roblox', 'Identifies my Roblox profile or a Roblox referral link. Referral details are disclosed separately; this is not an official Roblox site.'],
