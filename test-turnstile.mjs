@@ -61,7 +61,18 @@ assert.equal((await offline(new Request(origin + '/__turnstile', {
   method: 'POST', headers: { origin, 'content-type': 'application/x-www-form-urlencoded' },
   body: 'cf-turnstile-response=token',
 }))).status, 503);
-const mw = createMiddleware(async () => false, gate);
+const mw = createMiddleware(async () => false, gate, async () => true);
 assert.equal((await mw(request('/', { 'x-vercel-ip-country': 'IR', cookie }))).status, 451);
 assert.match(await (await mw(request('/', { 'x-vercel-ip-country': 'US' }))).text(), /cf-turnstile/);
+for (const country of ['US', 'GB']) {
+  const off = createMiddleware(async () => false, gate, async () => false);
+  assert.equal(await off(request('/', { 'x-vercel-ip-country': country })), undefined);
+}
+const off = createMiddleware(async () => false, gate, async () => false);
+assert.equal((await off(request('/', { 'x-vercel-ip-country': 'IR' }))).status, 451);
+assert.equal((await off(request('/', { 'x-vercel-ip-country': 'GB' }))), undefined);
+const ukBlocked = createMiddleware(async () => true, gate, async () => false);
+assert.equal((await ukBlocked(request('/', { 'x-vercel-ip-country': 'GB' }))).status, 403);
+const flagError = createMiddleware(async () => false, gate, async () => { throw new Error('flag unavailable'); });
+assert.match(await (await flagError(request())).text(), /cf-turnstile/);
 console.log('Turnstile gate checks passed (mocked Siteverify; live validation still required).');

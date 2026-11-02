@@ -14,6 +14,9 @@ once; a failed form submission returns a new widget for retry.
 - `TURNSTILE_SECRET`: the matching widget secret, stored only in Vercel's secret manager.
 - `TURNSTILE_HOSTNAMES`: `me.shadowdewuff.gay`.
 - The widget's allowed domains must include `me.shadowdewuff.gay`.
+- Vercel boolean flag `cf-turnsite`: `true` keeps the gate on; an explicit
+  `false` skips the gate. The gate stays on if flag evaluation fails. Location
+  restrictions remain active with either value.
 
 Missing configuration fails closed with HTTP 503. Alternate deployment hosts are
 denied unless explicitly configured and also allowed on the widget. Never allow

@@ -28,6 +28,8 @@ export function createMiddleware(
   evaluateUkBlock = async () =>
     (await flagsClient.evaluate('geo-block-enabled', true)).value,
   gate = turnstileGate,
+  evaluateTurnstile = async () =>
+    (await flagsClient.evaluate('cf-turnsite', true)).value,
 ) {
   return async function middleware(request) {
     const country = header(request, 'x-vercel-ip-country');
@@ -41,20 +43,25 @@ export function createMiddleware(
       return blockedResponse(451, country);
     }
 
-    // Vercel uses GB (not UK) for the United Kingdom.
-    // No flag evaluation is needed for visitors outside the UK.
-    if (country !== 'GB') return gate(request);
-
-    // On evaluation failure, retain UK blocking rather than silently allowing it.
-    let ukBlockEnabled = true;
-    try {
-      ukBlockEnabled = (await evaluateUkBlock()) !== false;
-    } catch (error) {
-      console.error('Unable to evaluate geo-block-enabled; defaulting to ON', error);
+    if (country === 'GB') {
+      // On evaluation failure, retain UK blocking rather than silently allowing it.
+      let ukBlockEnabled = true;
+      try {
+        ukBlockEnabled = (await evaluateUkBlock()) !== false;
+      } catch (error) {
+        console.error('Unable to evaluate geo-block-enabled; defaulting to ON', error);
+      }
+      if (ukBlockEnabled) return blockedResponse(403, country);
     }
 
-    if (!ukBlockEnabled) return gate(request);
-    return blockedResponse(403, country);
+    // Only an explicit false disables Turnstile. A missing flag or evaluation
+    // error retains the gate, including its existing fail-closed configuration.
+    try {
+      if ((await evaluateTurnstile()) === false) return;
+    } catch (error) {
+      console.error('Unable to evaluate cf-turnsite; defaulting to ON', error);
+    }
+    return gate(request);
   };
 }
 
